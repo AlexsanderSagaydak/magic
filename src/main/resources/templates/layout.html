@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Wizards'">Wizards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        'dark-secondary': '#1e293b',
+                        'dark-tertiary': '#334155',
+                        accent: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark text-gray-100 font-sans antialiased">
+    <!-- Navigation -->
+    <nav class="bg-dark-secondary border-b border-dark-tertiary">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                    ✨ Wizards
+                </h1>
+            </div>
+            <ul class="flex gap-6">
+                <li><a href="/" class="hover:text-accent transition">Home</a></li>
+                <li><a href="/users/register" class="hover:text-accent transition">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        <div th:include="this :: content"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-secondary border-t border-dark-tertiary mt-12">
+        <div class="max-w-6xl mx-auto px-6 py-8 text-center text-gray-400 text-sm">
+            <p>&copy; 2024 Wizards. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(timeout 15 mvn:*)",
+      "Bash(mvn clean package:*)",
+      "Bash(cmd /c \"taskkill /PID 20928 /F\")",
+      "Bash(tasklist:*)",
+      "Bash(cmd /c \"taskkill /PID 12232 /F & taskkill /PID 18816 /F\")",
+      "Bash(cmd /c:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
