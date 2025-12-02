@@ -21,223 +21,194 @@
     </script>
 </head>
 <body class="bg-dark text-gray-100 font-sans antialiased">
-    <!-- Navigation -->
-    <nav class="bg-dark-secondary border-b border-dark-tertiary">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                ✨ Wizards Feed
-            </h1>
-            <div class="flex items-center gap-4">
-                <a href="/" class="px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition duration-200">Home</a>
-                <form action="/logout" method="post" class="m-0">
-                    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                    <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition duration-200">Logout</button>
-                </form>
-            </div>
+<!-- Navigation -->
+<nav class="bg-dark-secondary border-b border-dark-tertiary">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+            ✨ Wizards Feed
+        </h1>
+        <div class="flex items-center gap-4">
+            <a href="/" class="px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition duration-200">Home</a>
+            <form action="/logout" method="post" class="m-0">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition duration-200">Logout</button>
+            </form>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- Main Content -->
-    <main class="min-h-screen bg-gradient-to-b from-dark via-dark-secondary to-dark py-12 px-4">
-        <div class="max-w-7xl mx-auto">
-            <!-- Filter Buttons -->
-            <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
-                <button class="filter-btn active px-4 py-2 rounded-lg bg-accent text-dark font-medium transition whitespace-nowrap" onclick="filterBySpecialization('')">All Wizards</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('White Magic')">White Magic</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('Black Magic')">Black Magic</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('Gray Magic')">Gray Magic</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('Elemental Magic')">Elemental</button>
-            </div>
+<!-- Main Content -->
+<main class="min-h-screen bg-gradient-to-b from-dark via-dark-secondary to-dark py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Filter Buttons -->
+        <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
+            <button class="filter-btn active px-4 py-2 rounded-lg bg-accent text-dark font-medium transition whitespace-nowrap" onclick="filterBySpecialization('')">All Wizards</button>
+            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('White Magic')">White Magic</button>
+            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('Black Magic')">Black Magic</button>
+            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('Gray Magic')">Gray Magic</button>
+            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition whitespace-nowrap" onclick="filterBySpecialization('Elemental Magic')">Elemental</button>
+        </div>
 
-            <!-- Content Grid: Sidebar + Feed -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
-                <!-- Sidebar: Settings & Messages (Left) -->
-                <div class="lg:col-span-1 flex flex-col gap-6 order-last lg:order-first">
-                    <!-- Settings Section -->
-                    <div id="settingsSection" class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 sticky top-24">
-                        <h3 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        <!-- Content Grid: Sidebar + Feed -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
+            <!-- Sidebar -->
+            <div class="lg:col-span-1 flex flex-col gap-6 order-last lg:order-first">
+
+                <!-- UPDATED SETTINGS SECTION -->
+                <div id="settingsSection" class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 sticky top-24">
+
+                    <!-- INDEPENDENT CARDS -->
+                    <div class="grid grid-cols-1 gap-3">
+
+                        <!-- Profile -->
+                        <div class="settings-item w-full px-4 py-3 bg-dark hover:bg-dark-tertiary rounded-lg text-gray-100
+                                        text-sm font-medium transition flex items-center gap-3 cursor-pointer">
+                            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            Settings
-                        </h3>
-                        <div class="space-y-3">
-                            <button class="settings-item w-full text-left px-4 py-3 bg-dark hover:bg-dark-tertiary rounded-lg text-gray-100 text-sm font-medium transition flex items-center gap-3">
-                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                Profile
-                            </button>
-                            <button class="settings-item w-full text-left px-4 py-3 bg-dark hover:bg-dark-tertiary rounded-lg text-gray-100 text-sm font-medium transition flex items-center gap-3">
-                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                                </svg>
-                                Notifications
-                            </button>
-                            <button class="settings-item w-full text-left px-4 py-3 bg-dark hover:bg-dark-tertiary rounded-lg text-gray-100 text-sm font-medium transition flex items-center gap-3">
-                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                                Privacy
-                            </button>
+                            Profile
                         </div>
-                    </div>
 
-                    <!-- Messages Section -->
-                    <div id="messagesSection" class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 sticky top-96">
-                        <h3 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        <!-- Notifications -->
+                        <div class="settings-item w-full px-4 py-3 bg-dark hover:bg-dark-tertiary rounded-lg text-gray-100
+                                        text-sm font-medium transition flex items-center gap-3 cursor-pointer">
+                            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            Messages
-                        </h3>
-                        <div id="messagesList" class="space-y-2">
-                            <!-- Messages will be rendered here -->
+                            Notifications
+                        </div>
+
+                        <!-- Privacy -->
+                        <div class="settings-item w-full px-4 py-3 bg-dark hover:bg-dark-tertiary rounded-lg text-gray-100
+                                        text-sm font-medium transition flex items-center gap-3 cursor-pointer">
+                            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            Privacy
                         </div>
                     </div>
                 </div>
 
-                <!-- Feed Section -->
-                <div class="lg:col-span-3 flex flex-col">
-                    <!-- Feed Container (Vertical List) -->
-                    <div id="feedContainer" class="space-y-6">
-                        <!-- Profile cards will be loaded here -->
-                    </div>
-
-                    <!-- Loading indicator -->
-                    <div id="loadingIndicator" style="display: none;" class="flex justify-center items-center py-12">
-                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
-                    </div>
-
-                    <!-- No profiles message -->
-                    <div id="noProfiles" style="display: none;" class="text-center py-12">
-                        <p class="text-gray-400 text-lg">🧙 No wizards found</p>
-                    </div>
+                <!-- Messages Section -->
+                <div id="messagesSection" class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 sticky top-96">
+                    <h3 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        Messages
+                    </h3>
+                    <div id="messagesList" class="space-y-2"></div>
                 </div>
             </div>
 
-            <!-- Pagination Controls -->
-            <div class="mt-12 flex justify-center items-center gap-4">
-                <button id="prevBtn" class="px-6 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" onclick="previousPage()" disabled>← Previous</button>
-
-                <div class="flex items-center gap-2">
-                    <span id="pageInfo" class="text-gray-400">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+            <!-- FEED -->
+            <div class="lg:col-span-3 flex flex-col">
+                <div id="feedContainer" class="space-y-6"></div>
+                <div id="loadingIndicator" style="display: none;" class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
                 </div>
-
-                <button id="nextBtn" class="px-6 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" onclick="nextPage()" disabled>Next →</button>
+                <div id="noProfiles" style="display: none;" class="text-center py-12">
+                    <p class="text-gray-400 text-lg">🧙 No wizards found</p>
+                </div>
             </div>
         </div>
-    </main>
 
-    <script>
-        // State management
-        let currentPage = 1;
-        let limit = 6;
-        let isLoading = false;
-        let currentFilter = '';
-        let totalCount = 0;
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center items-center gap-4">
+            <button id="prevBtn" class="px-6 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" onclick="previousPage()" disabled>← Previous</button>
 
-        /**
-         * Calculate total pages
-         */
-        function getTotalPages() {
-            return Math.ceil(totalCount / limit);
-        }
+            <span id="pageInfo" class="text-gray-400">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
 
-        /**
-         * Fetch profiles from the API
-         */
-        async function fetchProfiles(page = 1) {
-            if (isLoading) return;
+            <button id="nextBtn" class="px-6 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" onclick="nextPage()" disabled>Next →</button>
+        </div>
+    </div>
+</main>
 
-            isLoading = true;
-            document.getElementById('loadingIndicator').style.display = 'flex';
+<script>
+    let currentPage = 1;
+    let limit = 6;
+    let isLoading = false;
+    let currentFilter = '';
+    let totalCount = 0;
 
-            try {
-                const offset = (page - 1) * limit;
-                let url = `/api/profiles?offset=${offset}&limit=${limit}`;
+    function getTotalPages() {
+        return Math.ceil(totalCount / limit);
+    }
 
-                if (currentFilter) {
-                    url = `/api/profiles/specialization/${currentFilter}?offset=${offset}&limit=${limit}`;
-                }
+    async function fetchProfiles(page = 1) {
+        if (isLoading) return;
+        isLoading = true;
 
-                const response = await fetch(url);
-                const profiles = await response.json();
+        document.getElementById('loadingIndicator').style.display = 'flex';
+        try {
+            const offset = (page - 1) * limit;
+            let url = `/api/profiles?offset=${offset}&limit=${limit}`;
+            if (currentFilter) url = `/api/profiles/specialization/${currentFilter}?offset=${offset}&limit=${limit}`;
 
-                if (profiles.length === 0 && page === 1) {
-                    document.getElementById('noProfiles').style.display = 'block';
-                    document.getElementById('feedContainer').innerHTML = '';
-                } else {
-                    document.getElementById('noProfiles').style.display = 'none';
-                    renderProfiles(profiles);
-                    currentPage = page;
-                    updatePagination();
-                }
-            } catch (error) {
-                console.error('Error fetching profiles:', error);
-            } finally {
-                isLoading = false;
-                document.getElementById('loadingIndicator').style.display = 'none';
+            const response = await fetch(url);
+            const profiles = await response.json();
+
+            if (profiles.length === 0 && page === 1) {
+                document.getElementById('noProfiles').style.display = 'block';
+                document.getElementById('feedContainer').innerHTML = '';
+            } else {
+                document.getElementById('noProfiles').style.display = 'none';
+                renderProfiles(profiles);
+                currentPage = page;
+                updatePagination();
             }
+        } finally {
+            isLoading = false;
+            document.getElementById('loadingIndicator').style.display = 'none';
         }
+    }
 
-        /**
-         * Fetch total count of profiles
-         */
-        async function fetchTotalCount() {
-            try {
-                let url = '/api/profiles/count';
-                const response = await fetch(url);
-                totalCount = await response.json();
-            } catch (error) {
-                console.error('Error fetching count:', error);
-                totalCount = 0;
-            }
+    async function fetchTotalCount() {
+        try {
+            const response = await fetch('/api/profiles/count');
+            totalCount = await response.json();
+        } catch {
+            totalCount = 0;
         }
+    }
 
-        /**
-         * Renders profiles to the feed
-         */
-        function renderProfiles(profiles) {
-            const container = document.getElementById('feedContainer');
-            container.innerHTML = '';
+    function renderProfiles(profiles) {
+        const container = document.getElementById('feedContainer');
+        container.innerHTML = '';
 
-            profiles.forEach(profile => {
-                const card = createProfileCard(profile);
-                container.appendChild(card);
-            });
-        }
+        profiles.forEach(profile => {
+            const card = createProfileCard(profile);
+            container.appendChild(card);
+        });
+    }
 
-        /**
-         * Creates a profile card element
-         */
-        function createProfileCard(profile) {
-            const card = document.createElement('div');
-            card.className = 'bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden hover:border-accent hover:shadow-lg hover:shadow-accent/20 transition cursor-pointer flex flex-col';
-            card.onclick = () => navigateToProfile(profile.id);
+    function createProfileCard(profile) {
+        const card = document.createElement('div');
+        card.className = 'bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden hover:border-accent hover:shadow-lg hover:shadow-accent/20 transition cursor-pointer flex flex-col';
+        card.onclick = () => window.location.href = `/users/${profile.id}`;
+        const onlineClass = profile.online ? 'bg-green-500' : 'bg-gray-500';
 
-            const onlineClass = profile.online ? 'bg-green-500' : 'bg-gray-500';
-
-            card.innerHTML = `
-                <!-- Video Block (Top) -->
+        card.innerHTML = `
                 <div class="relative w-full h-64 bg-gradient-to-br from-accent to-blue-700 overflow-hidden flex-shrink-0">
-                    <img src="${profile.profileImageUrl}" alt="Profile cover" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(to right, #3b82f6, #1e40af)'">
+                    <img src="${profile.profileImageUrl}" alt="Profile cover" loading="lazy"
+                         style="width: 100%; height: 100%; object-fit: cover;"
+                         onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(to right, #3b82f6, #1e40af)'">
                     <div class="absolute top-2 right-2 bg-dark-secondary/80 backdrop-blur px-2 py-1 rounded text-xs text-white font-medium">🎥 Video</div>
                 </div>
 
-                <!-- Content (Bottom) -->
                 <div class="flex-1 flex flex-col justify-between p-4">
-                    <!-- User Info -->
                     <div>
-                        <!-- Avatar and Name -->
                         <div class="flex items-start gap-3 mb-3">
-                            <!-- Avatar -->
                             <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-accent flex-shrink-0 bg-dark-tertiary">
-                                <img src="${profile.avatarUrl}" alt="Avatar" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #3b82f6, #1e40af)'">
+                                <img src="${profile.avatarUrl}" alt="Avatar" loading="lazy"
+                                     style="width: 100%; height: 100%; object-fit: cover;"
+                                     onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #3b82f6, #1e40af)'">
                             </div>
 
-                            <!-- Name and Status -->
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
                                     <div class="font-bold text-gray-100 text-sm truncate">
@@ -249,115 +220,72 @@
                             </div>
                         </div>
 
-                        <!-- Specialization Badge -->
                         <div class="inline-block bg-dark-tertiary text-gray-100 px-2 py-1 rounded-lg text-xs font-medium border border-dark-tertiary hover:border-accent transition">
                             ${profile.specialization}
                         </div>
                     </div>
 
-                    <!-- Arrow indicator -->
                     <div class="flex justify-end mt-3">
                         <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
                 </div>
             `;
 
-            return card;
+        return card;
+    }
+
+    function filterBySpecialization(specialization) {
+        currentFilter = specialization;
+        currentPage = 1;
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('bg-accent', 'text-dark');
+            btn.classList.add('bg-dark-tertiary', 'text-gray-100');
+        });
+
+        event.target.classList.remove('bg-dark-tertiary', 'text-gray-100');
+        event.target.classList.add('bg-accent', 'text-dark');
+
+        fetchTotalCount().then(() => fetchProfiles(1));
+    }
+
+    function updatePagination() {
+        const totalPages = getTotalPages();
+        document.getElementById('currentPage').textContent = currentPage;
+        document.getElementById('totalPages').textContent = totalPages;
+
+        document.getElementById('prevBtn').disabled = currentPage <= 1;
+        document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+    }
+
+    function nextPage() {
+        const totalPages = getTotalPages();
+        if (currentPage < totalPages) {
+            fetchProfiles(currentPage + 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+    }
 
-        /**
-         * Navigates to user profile page
-         */
-        function navigateToProfile(userId) {
-            window.location.href = `/users/${userId}`;
+    function previousPage() {
+        if (currentPage > 1) {
+            fetchProfiles(currentPage - 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+    }
 
-        /**
-         * Filters profiles by specialization
-         */
-        async function filterBySpecialization(specialization) {
-            currentFilter = specialization;
-            currentPage = 1;
+    function renderMessages() {
+        const messagesList = document.getElementById('messagesList');
 
-            // Update active button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-accent', 'text-dark');
-                btn.classList.add('bg-dark-tertiary', 'text-gray-100', 'hover:bg-dark-tertiary/80');
-            });
-            event.target.classList.remove('bg-dark-tertiary', 'text-gray-100', 'hover:bg-dark-tertiary/80');
-            event.target.classList.add('bg-accent', 'text-dark');
+        const mockMessages = [
+            { id: 1, sender: 'Merlin', preview: 'Hey, how are you doing?', unread: true },
+            { id: 2, sender: 'Dumbledore', preview: 'The next meeting is...', unread: true },
+            { id: 3, sender: 'Gandalf', preview: 'Thanks for the invite!', unread: false }
+        ];
 
-            // Fetch count and load profiles
-            await fetchTotalCount();
-            fetchProfiles(1);
-        }
-
-        /**
-         * Update pagination buttons and info
-         */
-        function updatePagination() {
-            const totalPages = getTotalPages();
-            document.getElementById('currentPage').textContent = currentPage;
-            document.getElementById('totalPages').textContent = totalPages;
-
-            document.getElementById('prevBtn').disabled = currentPage <= 1;
-            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
-        }
-
-        /**
-         * Go to next page
-         */
-        function nextPage() {
-            const totalPages = getTotalPages();
-            if (currentPage < totalPages) {
-                fetchProfiles(currentPage + 1);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        /**
-         * Go to previous page
-         */
-        function previousPage() {
-            if (currentPage > 1) {
-                fetchProfiles(currentPage - 1);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        /**
-         * Initialize sidebar components
-         */
-        function initializeSidebar() {
-            // Settings button handlers
-            document.querySelectorAll('.settings-item').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const text = this.textContent.trim();
-                    // TODO: Navigate to respective pages
-                    // window.location.href = `/settings/${text.toLowerCase()}`;
-                });
-            });
-
-            // Initialize messages
-            renderMessages();
-        }
-
-        /**
-         * Render messages in sidebar
-         */
-        function renderMessages() {
-            const messagesList = document.getElementById('messagesList');
-
-            // Mock messages data - replace with API call later
-            const mockMessages = [
-                { id: 1, sender: 'Merlin', preview: 'Hey, how are you doing?', unread: true },
-                { id: 2, sender: 'Dumbledore', preview: 'The next meeting is...', unread: true },
-                { id: 3, sender: 'Gandalf', preview: 'Thanks for the invite!', unread: false }
-            ];
-
-            messagesList.innerHTML = mockMessages.map(msg => `
+        messagesList.innerHTML = mockMessages.map(msg => `
                 <div class="message-item p-3 bg-dark hover:bg-dark-tertiary rounded-lg cursor-pointer transition ${msg.unread ? 'border-l-2 border-accent' : ''}">
                     <div class="flex items-start justify-between mb-1">
                         <span class="text-sm font-medium text-gray-100">${msg.sender}</span>
@@ -366,25 +294,13 @@
                     <p class="text-xs text-gray-400 truncate">${msg.preview}</p>
                 </div>
             `).join('');
+    }
 
-            // Add click handlers to messages
-            document.querySelectorAll('.message-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    // TODO: Navigate to messages page
-                    // const senderId = this.dataset.senderId;
-                    // window.location.href = `/messages/${senderId}`;
-                });
-            });
-        }
-
-        /**
-         * Initialize feed on page load
-         */
-        document.addEventListener('DOMContentLoaded', async () => {
-            await fetchTotalCount();
-            fetchProfiles(1);
-            initializeSidebar();
-        });
-    </script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await fetchTotalCount();
+        fetchProfiles(1);
+        renderMessages();
+    });
+</script>
 </body>
 </html>
