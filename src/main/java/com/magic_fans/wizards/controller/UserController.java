@@ -92,11 +92,18 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String getUserProfile(@PathVariable int id, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check if user is authenticated
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/login";
+        }
+
         return userService.getUserById(id)
                 .map(user -> {
                     model.addAttribute("user", user);
-                    return "user-profile";
+                    return "profile";
                 })
-                .orElse("error");
+                .orElse("redirect:/feed");
     }
 }

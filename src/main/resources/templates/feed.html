@@ -204,7 +204,6 @@
         const card = document.createElement('div');
         card.className =
             'bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden hover:border-accent hover:shadow-lg cursor-pointer transition flex flex-col';
-        card.onclick = () => window.location.href = `/users/${profile.id}`;
 
         const onlineClass = profile.online ? 'bg-green-500' : 'bg-gray-500';
 
@@ -245,6 +244,7 @@
         </div>
     `;
 
+        card.onclick = () => window.location.href = `/users/${profile.id}`;
         return card;
     }
 
