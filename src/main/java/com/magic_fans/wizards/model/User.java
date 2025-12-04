@@ -34,6 +34,9 @@ public class User implements UserDetails {
     private String specialization;
 
     @Column(nullable = false)
+    private String role = "regular";
+
+    @Column(nullable = false)
     private boolean active = true;
 
     public User() {
@@ -46,6 +49,7 @@ public class User implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.specialization = specialization;
+        this.role = "regular";
         this.active = true;
     }
 
@@ -103,6 +107,14 @@ public class User implements UserDetails {
 
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public boolean isActive() {

@@ -161,14 +161,49 @@
                         <p class="text-xs text-gray-500 mt-1" th:text="#{register.form.password.hint}">Password must be at least 8 characters long</p>
                     </div>
 
-                    <!-- Specialization -->
+                    <!-- Role Selection -->
                     <div>
+                        <label class="block text-sm font-medium mb-4" th:text="#{register.form.role.label}">Select Your Role</label>
+                        <div class="space-y-3">
+                            <!-- Regular User -->
+                            <div class="flex items-center p-4 bg-dark border-2 border-dark-tertiary rounded-lg hover:border-accent/50 transition cursor-pointer" onclick="selectRole('regular')">
+                                <input
+                                    type="radio"
+                                    id="roleRegular"
+                                    name="role"
+                                    value="regular"
+                                    class="w-4 h-4 text-accent bg-dark-tertiary border-dark-tertiary focus:ring-accent"
+                                    required>
+                                <label for="roleRegular" class="ml-3 flex-1 cursor-pointer">
+                                    <div class="font-medium text-gray-100" th:text="#{register.form.role.regular.title}">I'm registering as a regular user</div>
+                                    <div class="text-sm text-gray-400" th:text="#{register.form.role.regular.desc}">I want to find specialists for help</div>
+                                </label>
+                            </div>
+
+                            <!-- Specialist User -->
+                            <div class="flex items-center p-4 bg-dark border-2 border-dark-tertiary rounded-lg hover:border-accent/50 transition cursor-pointer" onclick="selectRole('wizard')">
+                                <input
+                                    type="radio"
+                                    id="roleWizard"
+                                    name="role"
+                                    value="wizard"
+                                    class="w-4 h-4 text-accent bg-dark-tertiary border-dark-tertiary focus:ring-accent"
+                                    required>
+                                <label for="roleWizard" class="ml-3 flex-1 cursor-pointer">
+                                    <div class="font-medium text-gray-100" th:text="#{register.form.role.wizard.title}">I'm registering as a specialist</div>
+                                    <div class="text-sm text-gray-400" th:text="#{register.form.role.wizard.desc}">I want to help others</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Specialization (Hidden by default, shows when wizard role selected) -->
+                    <div id="specializationDiv" style="display: none;">
                         <label for="specialization" class="block text-sm font-medium mb-2" th:text="#{register.form.specialization}">Specialization</label>
                         <select
                             id="specialization"
                             th:field="*{specialization}"
-                            class="w-full px-4 py-3 bg-dark text-gray-100 border-2 border-dark-tertiary rounded-lg focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent focus:ring-offset-0 transition"
-                            required>
+                            class="w-full px-4 py-3 bg-dark text-gray-100 border-2 border-dark-tertiary rounded-lg focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent focus:ring-offset-0 transition">
                             <option value="" th:text="#{register.form.specialization.placeholder}">Select your specialization</option>
                             <option value="White Magic" th:text="#{register.form.specialization.white}">White Magic</option>
                             <option value="Black Magic" th:text="#{register.form.specialization.black}">Black Magic</option>
@@ -223,5 +258,29 @@
             <p th:text="#{footer.copyright}">2024 Wizards. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function selectRole(role) {
+            const specializationDiv = document.getElementById('specializationDiv');
+            const specializationSelect = document.getElementById('specialization');
+
+            if (role === 'wizard') {
+                specializationDiv.style.display = 'block';
+                specializationSelect.setAttribute('required', 'required');
+            } else {
+                specializationDiv.style.display = 'none';
+                specializationSelect.removeAttribute('required');
+                specializationSelect.value = '';
+            }
+        }
+
+        // Check on page load if wizard role was already selected
+        window.addEventListener('DOMContentLoaded', function() {
+            const roleWizard = document.getElementById('roleWizard');
+            if (roleWizard && roleWizard.checked) {
+                selectRole('wizard');
+            }
+        });
+    </script>
 </body>
 </html>

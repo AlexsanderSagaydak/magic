@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="'Login - ' + #{nav.title}">Login - Wizards</title>
+    <title th:text="#{login.page.title} + ' - ' + #{nav.title}">Login - Wizards</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -54,8 +54,8 @@
         <div class="max-w-2xl mx-auto">
             <!-- Header -->
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-2">Welcome Back</h2>
-                <p class="text-gray-400">Sign in to your magical account</p>
+                <h2 class="text-4xl font-bold mb-2" th:text="#{login.header.title}">Welcome Back</h2>
+                <p class="text-gray-400" th:text="#{login.header.subtitle}">Sign in to your magical account</p>
             </div>
 
             <!-- Error Alert -->
@@ -64,14 +64,14 @@
                     <svg class="w-5 h-5 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                     </svg>
-                    <span>Invalid username or password. Please try again.</span>
+                    <span th:text="#{login.error.invalid}">Invalid username or password. Please try again.</span>
                 </div>
             </div>
 
             <!-- Login Form -->
             <div class="bg-dark-secondary border border-dark-tertiary rounded-xl shadow-2xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
-                    <h3 class="text-2xl font-bold">Sign In</h3>
+                    <h3 class="text-2xl font-bold" th:text="#{login.form.title}">Sign In</h3>
                 </div>
 
                 <form action="/login" method="post" class="p-8 space-y-6">
@@ -79,12 +79,13 @@
 
                     <!-- Username -->
                     <div>
-                        <label for="username" class="block text-sm font-medium mb-2">Username</label>
+                        <label for="username" class="block text-sm font-medium mb-2" th:text="#{login.form.username}">Username</label>
                         <input
                             type="text"
                             id="username"
                             name="username"
                             class="w-full px-4 py-3 bg-dark border border-dark-tertiary rounded-lg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
+                            th:placeholder="#{login.form.username.placeholder}"
                             placeholder="Enter your username"
                             required
                             autofocus>
@@ -92,12 +93,13 @@
 
                     <!-- Password -->
                     <div>
-                        <label for="password" class="block text-sm font-medium mb-2">Password</label>
+                        <label for="password" class="block text-sm font-medium mb-2" th:text="#{login.form.password}">Password</label>
                         <input
                             type="password"
                             id="password"
                             name="password"
                             class="w-full px-4 py-3 bg-dark border border-dark-tertiary rounded-lg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
+                            th:placeholder="#{login.form.password.placeholder}"
                             placeholder="Enter your password"
                             required>
                     </div>
@@ -105,14 +107,15 @@
                     <!-- Submit Button -->
                     <button
                         type="submit"
-                        class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold rounded-lg transition duration-200 transform hover:scale-105 active:scale-95">
+                        class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold rounded-lg transition duration-200 transform hover:scale-105 active:scale-95"
+                        th:text="#{login.form.submit}">
                         Sign In
                     </button>
 
                     <!-- Register Link -->
                     <p class="text-center text-gray-400 text-sm">
-                        Don't have an account?
-                        <a href="/users/register" class="text-accent hover:underline">Create one</a>
+                        <span th:text="#{login.form.register.text}">Don't have an account?</span>
+                        <a href="/users/register" class="text-accent hover:underline" th:text="#{login.form.register.link}">Create one</a>
                     </p>
                 </form>
             </div>
@@ -121,18 +124,18 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
                 <div class="bg-dark-secondary border border-dark-tertiary rounded-lg p-6 text-center">
                     <div class="text-3xl mb-3">🔒</div>
-                    <h4 class="font-semibold mb-2">Secure</h4>
-                    <p class="text-sm text-gray-400">Your data is encrypted and protected</p>
+                    <h4 class="font-semibold mb-2" th:text="#{login.feature.secure.title}">Secure</h4>
+                    <p class="text-sm text-gray-400" th:text="#{login.feature.secure.desc}">Your data is encrypted and protected</p>
                 </div>
                 <div class="bg-dark-secondary border border-dark-tertiary rounded-lg p-6 text-center">
                     <div class="text-3xl mb-3">⚡</div>
-                    <h4 class="font-semibold mb-2">Fast</h4>
-                    <p class="text-sm text-gray-400">Sign in instantly to your account</p>
+                    <h4 class="font-semibold mb-2" th:text="#{login.feature.fast.title}">Fast</h4>
+                    <p class="text-sm text-gray-400" th:text="#{login.feature.fast.desc}">Sign in instantly to your account</p>
                 </div>
                 <div class="bg-dark-secondary border border-dark-tertiary rounded-lg p-6 text-center">
                     <div class="text-3xl mb-3">✨</div>
-                    <h4 class="font-semibold mb-2">Modern</h4>
-                    <p class="text-sm text-gray-400">Beautiful and intuitive interface</p>
+                    <h4 class="font-semibold mb-2" th:text="#{login.feature.modern.title}">Modern</h4>
+                    <p class="text-sm text-gray-400" th:text="#{login.feature.modern.desc}">Beautiful and intuitive interface</p>
                 </div>
             </div>
         </div>

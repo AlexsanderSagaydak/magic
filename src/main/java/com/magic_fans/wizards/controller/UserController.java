@@ -56,6 +56,11 @@ public class UserController {
             // Ensure user is marked as active
             user.setActive(true);
 
+            // Set default specialization for regular users
+            if ("regular".equals(user.getRole())) {
+                user.setSpecialization("None");
+            }
+
             // Encode password before saving
             user.setPassword(passwordEncoder.encode(plainPassword));
             User savedUser = userService.saveUser(user);
@@ -86,6 +91,12 @@ public class UserController {
         if (id != null) {
             model.addAttribute("userId", id);
             model.addAttribute("userName", name != null ? name : "User");
+
+            // Get user role to show conditional steps
+            var user = userService.getUserById(id);
+            if (user.isPresent()) {
+                model.addAttribute("userRole", user.get().getRole());
+            }
         }
         return "success";
     }

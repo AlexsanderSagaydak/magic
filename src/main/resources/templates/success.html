@@ -36,11 +36,11 @@
                 </ul>
                 <!-- Language Selector -->
                 <div class="flex gap-2">
-                    <a href="?lang=en" class="px-3 py-2 rounded-lg text-sm font-medium transition"
+                    <a th:href="@{/users/success(id=${userId}, name=${userName}, lang=en)}" class="px-3 py-2 rounded-lg text-sm font-medium transition"
                        th:classappend="${#locale.language == 'en' ? 'bg-accent text-dark' : 'bg-dark-tertiary hover:bg-dark-tertiary/80'}">
                         <span th:text="#{lang.en}">EN</span>
                     </a>
-                    <a href="?lang=ru" class="px-3 py-2 rounded-lg text-sm font-medium transition"
+                    <a th:href="@{/users/success(id=${userId}, name=${userName}, lang=ru)}" class="px-3 py-2 rounded-lg text-sm font-medium transition"
                        th:classappend="${#locale.language == 'ru' ? 'bg-accent text-dark' : 'bg-dark-tertiary hover:bg-dark-tertiary/80'}">
                         <span th:text="#{lang.ru}">RU</span>
                     </a>
@@ -94,17 +94,32 @@
                     <div class="space-y-3">
                         <h4 class="font-semibold text-gray-300" th:text="#{success.nextSteps}">What's Next?</h4>
                         <div class="space-y-2 text-left">
-                            <div class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent transition">
+                            <!-- Step 1: Complete Profile -->
+                            <a href="/my-profile" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
                                 <span class="text-accent font-semibold">1</span>
                                 <span class="text-gray-400" th:text="#{success.step1}">Complete your profile with additional information</span>
+                            </a>
+
+                            <!-- Step 2: Choose Specialization (only for wizard role) -->
+                            <div th:if="${userRole == 'wizard'}">
+                                <a href="/edit-specialization" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
+                                    <span class="text-accent font-semibold">2</span>
+                                    <span class="text-gray-400" th:text="#{success.step2}">Choose your magical specialization</span>
+                                </a>
                             </div>
-                            <div class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent transition">
-                                <span class="text-accent font-semibold">2</span>
-                                <span class="text-gray-400" th:text="#{success.step2}">Choose your magical specialization</span>
+
+                            <!-- Step 3: Start Learning (numbering changes based on role) -->
+                            <div th:if="${userRole == 'wizard'}">
+                                <a href="/feed" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
+                                    <span class="text-accent font-semibold">3</span>
+                                    <span class="text-gray-400" th:text="#{success.step3}">Start learning and exploring the magical world</span>
+                                </a>
                             </div>
-                            <div class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent transition">
-                                <span class="text-accent font-semibold">3</span>
-                                <span class="text-gray-400" th:text="#{success.step3}">Start learning and exploring the magical world</span>
+                            <div th:if="${userRole != 'wizard'}">
+                                <a href="/feed" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
+                                    <span class="text-accent font-semibold">2</span>
+                                    <span class="text-gray-400" th:text="#{success.step3}">Start learning and exploring the magical world</span>
+                                </a>
                             </div>
                         </div>
                     </div>
