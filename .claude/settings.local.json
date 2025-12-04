@@ -12,7 +12,8 @@
       "Bash(cmd /c \"taskkill /PID 20928 /F\")",
       "Bash(tasklist:*)",
       "Bash(cmd /c \"taskkill /PID 12232 /F & taskkill /PID 18816 /F\")",
-      "Bash(cmd /c:*)"
+      "Bash(cmd /c:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
