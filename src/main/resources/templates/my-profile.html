@@ -65,7 +65,7 @@
         <section class="flex-1 max-w-3xl mx-auto flex flex-col">
 
             <!-- PROFILE CARD -->
-            <div class="bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden p-8">
+            <div id="profileCard" class="bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden p-8">
 
                 <!-- HEADER -->
                 <div class="flex items-start gap-6 mb-8 pb-8 border-b border-dark-tertiary">
@@ -295,8 +295,10 @@
 
 <script>
     function toggleEditMode() {
-        const profileCard = document.querySelector('.bg-dark-secondary');
-        profileCard.classList.toggle('edit-mode');
+        const profileCard = document.getElementById('profileCard');
+        if (profileCard) {
+            profileCard.classList.toggle('edit-mode');
+        }
     }
 </script>
 
