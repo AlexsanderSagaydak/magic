@@ -155,12 +155,12 @@ public class UserController {
                     boolean isSubscribed = false;
                     if ("regular".equals(currentUser.getRole()) && "wizard".equals(viewedUser.getRole())) {
                         isSubscribed = subscriptionRepository.existsByRegularUserIdAndWizardId(currentUser.getId(), viewedUser.getId());
-                        model.addAttribute("isSubscribed", isSubscribed);
                     }
 
                     // Wizard viewing regular is allowed (but we don't show this in practice)
                     model.addAttribute("user", viewedUser);
                     model.addAttribute("isOwnProfile", false);
+                    model.addAttribute("isSubscribed", isSubscribed);
 
                     return "profile";
                 })
