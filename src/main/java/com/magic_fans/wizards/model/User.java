@@ -39,6 +39,14 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean active = true;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "regular_profile_id")
+    private RegularUserProfile regularProfile;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "wizard_profile_id")
+    private WizardProfile wizardProfile;
+
     public User() {
     }
 
@@ -148,5 +156,21 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return active;
+    }
+
+    public RegularUserProfile getRegularProfile() {
+        return regularProfile;
+    }
+
+    public void setRegularProfile(RegularUserProfile regularProfile) {
+        this.regularProfile = regularProfile;
+    }
+
+    public WizardProfile getWizardProfile() {
+        return wizardProfile;
+    }
+
+    public void setWizardProfile(WizardProfile wizardProfile) {
+        this.wizardProfile = wizardProfile;
     }
 }

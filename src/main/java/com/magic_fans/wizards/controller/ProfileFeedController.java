@@ -5,6 +5,8 @@ import com.magic_fans.wizards.model.User;
 import com.magic_fans.wizards.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,10 +51,28 @@ public class ProfileFeedController {
             offset = 0;
         }
 
-        // Get all users and apply pagination
+        // Get current user's role
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userRole = (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser"))
+            ? "regular" // Assuming regular user if logged in, we'll get actual role from DB if needed
+            : null;
+
+        // Get all users and apply pagination with role-based filtering
         List<UserProfileDTO> profiles = userService.getAllUsers()
                 .stream()
                 .filter(User::isActive)  // Only active users
+                .filter(u -> {
+                    // Regular users see only Wizards
+                    if ("regular".equals(userRole)) {
+                        return "wizard".equals(u.getRole());
+                    }
+                    // Wizards see everyone except other wizards
+                    if ("wizard".equals(userRole)) {
+                        return !"wizard".equals(u.getRole());
+                    }
+                    // No one logged in - show only wizards
+                    return "wizard".equals(u.getRole());
+                })
                 .skip(offset)             // Skip offset items
                 .limit(limit)             // Limit to requested amount
                 .map(this::convertToDTO)  // Convert to DTO
@@ -85,10 +105,28 @@ public class ProfileFeedController {
             offset = 0;
         }
 
+        // Get current user's role
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userRole = (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser"))
+            ? "regular"
+            : null;
+
         List<UserProfileDTO> profiles = userService.getAllUsers()
                 .stream()
                 .filter(User::isActive)
                 .filter(u -> u.getSpecialization().equalsIgnoreCase(specialization))
+                .filter(u -> {
+                    // Regular users see only Wizards
+                    if ("regular".equals(userRole)) {
+                        return "wizard".equals(u.getRole());
+                    }
+                    // Wizards see everyone except other wizards
+                    if ("wizard".equals(userRole)) {
+                        return !"wizard".equals(u.getRole());
+                    }
+                    // No one logged in - show only wizards
+                    return "wizard".equals(u.getRole());
+                })
                 .skip(offset)
                 .limit(limit)
                 .map(this::convertToDTO)
@@ -125,6 +163,12 @@ public class ProfileFeedController {
             offset = 0;
         }
 
+        // Get current user's role
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userRole = (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser"))
+            ? "regular"
+            : null;
+
         String searchQuery = query.toLowerCase();
 
         List<UserProfileDTO> profiles = userService.getAllUsers()
@@ -133,6 +177,18 @@ public class ProfileFeedController {
                 .filter(u -> u.getUsername().toLowerCase().contains(searchQuery) ||
                            u.getFirstName().toLowerCase().contains(searchQuery) ||
                            u.getLastName().toLowerCase().contains(searchQuery))
+                .filter(u -> {
+                    // Regular users see only Wizards
+                    if ("regular".equals(userRole)) {
+                        return "wizard".equals(u.getRole());
+                    }
+                    // Wizards see everyone except other wizards
+                    if ("wizard".equals(userRole)) {
+                        return !"wizard".equals(u.getRole());
+                    }
+                    // No one logged in - show only wizards
+                    return "wizard".equals(u.getRole());
+                })
                 .skip(offset)
                 .limit(limit)
                 .map(this::convertToDTO)
