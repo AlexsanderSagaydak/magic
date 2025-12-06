@@ -35,7 +35,7 @@
         }
 
         .filter-container {
-            max-height: 150px;
+            max-height: 2000px;
             opacity: 1;
             margin-bottom: 2rem;
             transition: all 0.3s ease-in-out;
@@ -48,6 +48,53 @@
 
         .filter-collapsed .filter-toggle-icon {
             transform: rotate(180deg);
+        }
+
+        /* Accordion styles for skills filter */
+        .accordion-content,
+        .accordion-subcontent {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .accordion-content.expanded {
+            max-height: 3000px;
+            opacity: 1;
+            margin-top: 0.5rem;
+        }
+
+        .accordion-subcontent.expanded {
+            max-height: 1000px;
+            opacity: 1;
+            margin-top: 0.5rem;
+            padding-left: 0.75rem;
+        }
+
+        .accordion-content.collapsed,
+        .accordion-subcontent.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .chevron {
+            transition: transform 0.3s ease;
+        }
+
+        .chevron.rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        /* Checkbox styles */
+        .skill-checkbox {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .skill-checkbox:hover {
+            background-color: rgba(59, 130, 246, 0.1);
         }
     </style>
 </head>
@@ -64,12 +111,119 @@
         <!-- FILTER SECTION -->
         <div class="filter-collapsed mb-8">
             <!-- Collapsible Filter Container -->
-            <div class="filter-container flex gap-3 overflow-x-auto pb-2">
-                <button class="filter-btn active px-4 py-2 rounded-lg bg-accent text-dark font-medium transition" onclick="filterBySpecialization('')">All Wizards</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('White Magic')">White Magic</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Black Magic')">Black Magic</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Gray Magic')">Gray Magic</button>
-                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Elemental Magic')">Elemental</button>
+            <div class="filter-container space-y-4 pb-2">
+
+                <!-- Specialization Filter -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-300 mb-2">Фильтр по специализации:</h4>
+                    <div class="flex gap-3 overflow-x-auto pb-2">
+                        <button class="filter-btn active px-4 py-2 rounded-lg bg-accent text-dark font-medium transition" onclick="filterBySpecialization('')">All Wizards</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('White Magic')">White Magic</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Black Magic')">Black Magic</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Gray Magic')">Gray Magic</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Elemental Magic')">Elemental</button>
+                    </div>
+                </div>
+
+                <!-- Skills Filter Accordion -->
+                <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-semibold text-gray-300">Фильтр по навыкам:</h4>
+                        <button onclick="clearSkillsFilter()" class="text-xs text-accent hover:text-blue-400 transition">Сбросить все</button>
+                    </div>
+
+                    <!-- Compact Skills Accordion - Most Popular Skills -->
+                    <div class="space-y-2">
+
+                        <!-- Top Skills (Collapsed by default) -->
+                        <div class="accordion-item">
+                            <button type="button" onclick="toggleAccordion(this)"
+                                    class="w-full flex items-center justify-between px-2 py-1.5 bg-dark hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                                <span>Популярные навыки</span>
+                                <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <div class="accordion-content collapsed">
+                                <div class="grid grid-cols-2 gap-1 mt-2">
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Таро" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Таро</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Руны" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Руны</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Астрология" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Астрология</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Нумерология" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Нумерология</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Гипноз" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Гипноз</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Чакры" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Чакры</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sphere of Work -->
+                        <div class="accordion-item">
+                            <button type="button" onclick="toggleAccordion(this)"
+                                    class="w-full flex items-center justify-between px-2 py-1.5 bg-dark hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                                <span>Сфера работы</span>
+                                <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <div class="accordion-content collapsed">
+                                <div class="grid grid-cols-2 gap-1 mt-2">
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Судьба" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Судьба</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Отношения" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Отношения</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Деньги" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Деньги</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Здоровье" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Здоровье</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Карьера" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Карьера</span>
+                                    </label>
+                                    <label class="skill-checkbox flex items-center gap-1 px-2 py-1 rounded text-xs">
+                                        <input type="checkbox" value="Защита" class="skill-filter-checkbox w-3 h-3" onchange="applySkillsFilter()">
+                                        <span>Защита</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Selected Skills Display -->
+                    <div id="selectedSkillsDisplay" class="mt-3 flex flex-wrap gap-1" style="display: none;">
+                        <!-- Selected skill badges will appear here -->
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
@@ -135,6 +289,7 @@
     let limit = 6;
     let isLoading = false;
     let currentFilter = '';
+    let currentSkillsFilter = [];  // Array of selected skill names
     let totalCount = 0;
 
     function getTotalPages() { return Math.ceil(totalCount / limit); }
@@ -148,8 +303,21 @@
         try {
             const offset = (page - 1) * limit;
             let url = `/api/profiles?offset=${offset}&limit=${limit}`;
-            if (currentFilter)
-                url = `/api/profiles/specialization/${currentFilter}?offset=${offset}&limit=${limit}`;
+
+            // Build URL with filters
+            if (currentFilter || currentSkillsFilter.length > 0) {
+                url = `/api/profiles/filter?offset=${offset}&limit=${limit}`;
+
+                if (currentFilter) {
+                    url += `&specialization=${encodeURIComponent(currentFilter)}`;
+                }
+
+                if (currentSkillsFilter.length > 0) {
+                    currentSkillsFilter.forEach(skill => {
+                        url += `&skills=${encodeURIComponent(skill)}`;
+                    });
+                }
+            }
 
             const response = await fetch(url);
             const profiles = await response.json();
@@ -375,6 +543,98 @@
         if (filterSection && !filterSection.classList.contains('filter-collapsed')) {
             toggleFilterVisibility();
         }
+    }
+
+    /**
+     * Toggle accordion section (same as in my-profile)
+     */
+    function toggleAccordion(button) {
+        const content = button.nextElementSibling;
+        const chevron = button.querySelector('.chevron');
+
+        if (content.classList.contains('collapsed')) {
+            content.classList.remove('collapsed');
+            content.classList.add('expanded');
+            chevron.classList.add('rotate-180');
+        } else {
+            content.classList.remove('expanded');
+            content.classList.add('collapsed');
+            chevron.classList.remove('rotate-180');
+        }
+    }
+
+    /**
+     * Apply skills filter - collect checked skills and reload feed
+     */
+    function applySkillsFilter() {
+        const checkboxes = document.querySelectorAll('.skill-filter-checkbox:checked');
+        currentSkillsFilter = Array.from(checkboxes).map(cb => cb.value);
+        currentPage = 1;
+
+        // Update selected skills display
+        updateSelectedSkillsDisplay();
+
+        // Reload profiles with filter
+        fetchTotalCount().then(() => fetchProfiles(1));
+    }
+
+    /**
+     * Clear all skills filter
+     */
+    function clearSkillsFilter() {
+        document.querySelectorAll('.skill-filter-checkbox').forEach(cb => {
+            cb.checked = false;
+        });
+
+        currentSkillsFilter = [];
+        currentPage = 1;
+
+        // Update display
+        updateSelectedSkillsDisplay();
+
+        // Reload profiles
+        fetchTotalCount().then(() => fetchProfiles(1));
+    }
+
+    /**
+     * Update the display of selected skills as badges
+     */
+    function updateSelectedSkillsDisplay() {
+        const display = document.getElementById('selectedSkillsDisplay');
+
+        if (currentSkillsFilter.length === 0) {
+            display.style.display = 'none';
+            display.innerHTML = '';
+            return;
+        }
+
+        display.style.display = 'flex';
+        display.innerHTML = currentSkillsFilter.map(skill => `
+            <span class="inline-flex items-center gap-1 px-2 py-1 bg-accent/20 border border-accent rounded-full text-xs text-accent">
+                ${skill}
+                <button onclick="removeSkillFilter('${skill}')" class="hover:bg-accent/30 rounded-full p-0.5">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </span>
+        `).join('');
+    }
+
+    /**
+     * Remove a specific skill from filter
+     */
+    function removeSkillFilter(skillName) {
+        const checkbox = document.querySelector(`.skill-filter-checkbox[value="${skillName}"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+
+        currentSkillsFilter = currentSkillsFilter.filter(s => s !== skillName);
+        currentPage = 1;
+
+        updateSelectedSkillsDisplay();
+        fetchTotalCount().then(() => fetchProfiles(1));
     }
 
     function updatePagination() {

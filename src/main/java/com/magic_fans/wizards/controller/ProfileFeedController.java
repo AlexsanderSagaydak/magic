@@ -3,6 +3,7 @@ package com.magic_fans.wizards.controller;
 import com.magic_fans.wizards.dto.UserProfileDTO;
 import com.magic_fans.wizards.model.User;
 import com.magic_fans.wizards.service.UserService;
+import com.magic_fans.wizards.service.WizardSkillsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,9 @@ public class ProfileFeedController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WizardSkillsService wizardSkillsService;
 
     /**
      * Gets a paginated list of user profiles for the feed.
@@ -188,6 +192,92 @@ public class ProfileFeedController {
                     }
                     // No one logged in - show only wizards
                     return "wizard".equals(u.getRole());
+                })
+                .skip(offset)
+                .limit(limit)
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(profiles);
+    }
+
+    /**
+     * Gets profiles filtered by specialization and/or skills.
+     * Supports combined filtering - wizards must match specialization (if provided)
+     * AND have at least one of the selected skills (if provided).
+     *
+     * @param specialization optional magical specialization filter
+     * @param skills optional list of skill names to filter by (OR logic - any skill matches)
+     * @param offset the starting offset for pagination (default 0)
+     * @param limit the maximum number of profiles to return (default 10)
+     * @return ResponseEntity containing list of UserProfileDTO objects
+     */
+    @GetMapping("/filter")
+    public ResponseEntity<List<UserProfileDTO>> getProfilesWithFilters(
+            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) List<String> skills,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit) {
+
+        if (limit > 50) {
+            limit = 50;
+        }
+        if (limit < 1) {
+            limit = 10;
+        }
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        // Get current user's role
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userRole = (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser"))
+            ? "regular"
+            : null;
+
+        // Get wizard profile IDs that match the skills filter (if skills provided)
+        List<Integer> matchingWizardProfileIds = null;
+        if (skills != null && !skills.isEmpty()) {
+            matchingWizardProfileIds = wizardSkillsService.filterWizardsBySkills(skills);
+        }
+
+        // Final list to filter against
+        final List<Integer> wizardIds = matchingWizardProfileIds;
+
+        List<UserProfileDTO> profiles = userService.getAllUsers()
+                .stream()
+                .filter(User::isActive)
+                .filter(u -> {
+                    // Apply role-based filtering first
+                    if ("regular".equals(userRole)) {
+                        if (!"wizard".equals(u.getRole())) return false;
+                    } else if ("wizard".equals(userRole)) {
+                        if ("wizard".equals(u.getRole())) return false;
+                    } else {
+                        if (!"wizard".equals(u.getRole())) return false;
+                    }
+
+                    // Filter by specialization if provided
+                    if (specialization != null && !specialization.trim().isEmpty()) {
+                        if (u.getSpecialization() == null ||
+                            !u.getSpecialization().equalsIgnoreCase(specialization)) {
+                            return false;
+                        }
+                    }
+
+                    // Filter by skills if provided
+                    if (wizardIds != null && !wizardIds.isEmpty()) {
+                        // User must be a wizard and have a wizard profile
+                        if (!"wizard".equals(u.getRole()) || u.getWizardProfile() == null) {
+                            return false;
+                        }
+                        // Check if this wizard's profile ID is in the matching list
+                        if (!wizardIds.contains(u.getWizardProfile().getId())) {
+                            return false;
+                        }
+                    }
+
+                    return true;
                 })
                 .skip(offset)
                 .limit(limit)
