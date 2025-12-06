@@ -26,8 +26,7 @@ public class HomeController {
 
         // Check if user is authenticated
         if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            model.addAttribute("username", auth.getName());
-            return "home";
+            return "redirect:/feed";
         }
 
         // Redirect to login if not authenticated

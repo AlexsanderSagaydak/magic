@@ -16,7 +16,8 @@
       "Bash(git add:*)",
       "Bash(mvn test:*)",
       "Bash(timeout:*)",
-      "Bash(mvn spring-boot:run:*)"
+      "Bash(mvn spring-boot:run:*)",
+      "Bash(del \"D:\\wizards\\src\\main\\resources\\templates\\home.html\")"
     ],
     "deny": [],
     "ask": []
