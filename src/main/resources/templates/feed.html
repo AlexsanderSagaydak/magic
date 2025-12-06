@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Wizards Feed</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -164,6 +166,11 @@
             <img src="${profile.profileImageUrl}" class="w-full h-full object-cover"
                 onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(to right, #3b82f6, #1e40af)'">
             <div class="absolute top-2 right-2 bg-dark-secondary/80 px-2 py-1 rounded text-xs">🎥 Video</div>
+            <button data-wizard-id="${profile.id}" class="favorite-btn absolute top-2 left-2 bg-dark-secondary/90 hover:bg-dark-secondary p-2 rounded-full transition-all hover:scale-110 z-10">
+                <svg class="w-5 h-5 text-red-500 favorite-icon transition-all" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </button>
         </div>
 
         <div class="p-4 flex flex-col justify-between h-full">
@@ -196,8 +203,196 @@
         </div>
     `;
 
-        card.onclick = () => window.location.href = `/users/${profile.id}`;
+        // Add click handler for the card (navigate to profile)
+        card.querySelector('.p-4').onclick = () => window.location.href = `/users/${profile.id}`;
+
+        // Add click handler for favorite button (prevent card navigation)
+        const favoriteBtn = card.querySelector('.favorite-btn');
+        favoriteBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleFavorite(e, profile.id);
+        };
+
+        // Check and set initial favorite status
+        checkFavoriteStatus(profile.id, card);
+
         return card;
+    }
+
+    /**
+     * Checks if a wizard is in the user's favorites and updates the UI accordingly.
+     * @param {number} wizardId - The ID of the wizard to check
+     * @param {HTMLElement} cardElement - The card element containing the favorite button
+     */
+    async function checkFavoriteStatus(wizardId, cardElement) {
+        try {
+            const response = await fetch(`/favorites/check/${wizardId}`);
+
+            if (!response.ok) {
+                console.error(`Failed to check favorite status: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+            const icon = cardElement.querySelector('.favorite-icon');
+
+            if (data.isFavorite) {
+                icon.setAttribute('fill', 'currentColor');
+                icon.style.transform = 'scale(1.1)';
+            } else {
+                icon.removeAttribute('fill');
+                icon.style.transform = 'scale(1)';
+            }
+        } catch (error) {
+            console.error('Error checking favorite status:', error);
+        }
+    }
+
+    /**
+     * Toggles the favorite status of a wizard (add or remove from favorites).
+     * @param {Event} event - The click event
+     * @param {number} wizardId - The ID of the wizard to toggle
+     */
+    async function toggleFavorite(event, wizardId) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const btn = event.target.closest('.favorite-btn');
+        const icon = btn.querySelector('.favorite-icon');
+        const isFilled = icon.getAttribute('fill') === 'currentColor';
+        const url = isFilled ? `/favorites/remove/${wizardId}` : `/favorites/add/${wizardId}`;
+
+        // Get CSRF token from meta tags
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        // Optimistic UI update
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        try {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add CSRF token if available
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: headers
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Update UI based on response
+            if (data.success) {
+                if (data.isFavorite) {
+                    icon.setAttribute('fill', 'currentColor');
+                    icon.style.transform = 'scale(1.1)';
+                    showToast('Added to favorites!', 'success');
+                } else {
+                    icon.removeAttribute('fill');
+                    icon.style.transform = 'scale(1)';
+                    showToast('Removed from favorites', 'info');
+                }
+
+                // Update favorite count in sidebar
+                loadFavoriteCount();
+            } else {
+                throw new Error(data.message || 'Operation failed');
+            }
+
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+            showToast('Failed to update favorite. Please try again.', 'error');
+
+            // Revert UI on error
+            if (isFilled) {
+                icon.setAttribute('fill', 'currentColor');
+            } else {
+                icon.removeAttribute('fill');
+            }
+        } finally {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+    }
+
+    /**
+     * Loads and updates the favorite count in the sidebar.
+     */
+    async function loadFavoriteCount() {
+        try {
+            const response = await fetch('/favorites/count');
+
+            if (!response.ok) {
+                console.error(`Failed to load favorite count: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+            const countElement = document.getElementById('favoriteCount');
+
+            if (countElement) {
+                countElement.textContent = data.count;
+
+                // Show/hide badge based on count
+                if (data.count > 0) {
+                    countElement.style.display = 'inline-block';
+                } else {
+                    countElement.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading favorite count:', error);
+        }
+    }
+
+    /**
+     * Shows a toast notification to the user.
+     * @param {string} message - The message to display
+     * @param {string} type - The type of toast ('success', 'error', 'info')
+     */
+    function showToast(message, type = 'info') {
+        // Remove existing toast if any
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all transform translate-y-0 opacity-100';
+
+        // Set color based on type
+        const colors = {
+            success: 'bg-green-600 text-white',
+            error: 'bg-red-600 text-white',
+            info: 'bg-blue-600 text-white'
+        };
+
+        toast.className += ' ' + (colors[type] || colors.info);
+        toast.textContent = message;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateY(0)';
+        }, 10);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
     function filterBySpecialization(s) {
@@ -263,6 +458,7 @@
         await fetchTotalCount();
         fetchProfiles(1);
         renderMessages();
+        loadFavoriteCount();
     });
 </script>
 

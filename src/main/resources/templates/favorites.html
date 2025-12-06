@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>My Favorites - Wizards</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        'dark-secondary': '#1e293b',
+                        'dark-tertiary': '#334155',
+                        accent: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-dark text-gray-100 font-sans antialiased">
+
+<!-- NAVIGATION -->
+<div th:replace="~{fragments::header}"></div>
+
+<!-- MAIN CONTENT -->
+<main class="min-h-screen bg-gradient-to-b from-dark via-dark-secondary to-dark py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- HEADER -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-100 mb-2">My Favorites</h1>
+            <p class="text-gray-400">
+                You have <span th:text="${favoriteCount}">0</span> wizard(s) in your favorites
+            </p>
+        </div>
+
+        <!-- FAVORITES GRID -->
+        <div th:if="${favoriteCount > 0}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div th:each="favorite : ${favorites}"
+                 class="bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden hover:border-accent hover:shadow-lg transition cursor-pointer"
+                 th:onclick="'window.location.href=\'/users/' + ${favorite.wizardId} + '\''">
+
+                <!-- Wizard Image -->
+                <div class="relative w-full h-48 bg-gradient-to-br from-accent to-blue-700 overflow-hidden">
+                    <img th:src="${favorite.profileImageUrl}"
+                         class="w-full h-full object-cover"
+                         th:onerror="'this.style.display=\'none\'; this.parentElement.style.background=\'linear-gradient(to right, #3b82f6, #1e40af)\''">
+
+                    <!-- Remove button -->
+                    <button th:data-wizard-id="${favorite.wizardId}"
+                            onclick="event.stopPropagation(); removeFavorite(this)"
+                            class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 p-2 rounded-full transition-all hover:scale-110 z-10"
+                            title="Remove from favorites">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Wizard Info -->
+                <div class="p-4">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-accent bg-dark-tertiary">
+                            <img th:src="${favorite.avatarUrl}"
+                                 class="w-full h-full object-cover"
+                                 th:onerror="'this.style.display=\'none\'; this.parentElement.style.background=\'linear-gradient(135deg, #3b82f6, #1e40af)\''">
+                        </div>
+
+                        <div class="flex-1">
+                            <div class="font-bold text-base mb-1"
+                                 th:text="${favorite.firstName} + ' ' + ${favorite.lastName}">
+                                Wizard Name
+                            </div>
+                            <div class="text-xs text-gray-400"
+                                 th:text="'@' + ${favorite.username}">
+                                @username
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inline-block bg-dark-tertiary border border-dark-tertiary hover:border-accent px-2 py-1 rounded text-xs mb-2"
+                         th:text="${favorite.specialization}">
+                        Specialization
+                    </div>
+
+                    <div class="text-xs text-gray-500 mt-2"
+                         th:text="'Added ' + ${#temporals.format(favorite.addedAt, 'MMM dd, yyyy')}">
+                        Added date
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div th:if="${favoriteCount == 0}" class="text-center py-16">
+            <svg class="w-24 h-24 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+            <h2 class="text-2xl font-bold text-gray-400 mb-2">No favorites yet</h2>
+            <p class="text-gray-500 mb-6">Start adding wizards to your favorites from the feed!</p>
+            <a href="/feed"
+               class="inline-block px-6 py-3 bg-accent text-white rounded-lg hover:bg-blue-600 transition">
+                Browse Wizards
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<script>
+    /**
+     * Removes a wizard from favorites with confirmation.
+     * @param {HTMLElement} button - The remove button element
+     */
+    async function removeFavorite(button) {
+        const wizardId = button.getAttribute('data-wizard-id');
+
+        if (!confirm('Remove this wizard from your favorites?')) {
+            return;
+        }
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+
+        // Get CSRF token from meta tags
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+        try {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add CSRF token if available
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+
+            const response = await fetch(`/favorites/remove/${wizardId}`, {
+                method: 'POST',
+                headers: headers
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Remove the card from DOM with animation
+                const card = button.closest('.grid > div');
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+
+                setTimeout(() => {
+                    card.remove();
+
+                    // Check if no more favorites, reload page to show empty state
+                    const remainingCards = document.querySelectorAll('.grid > div').length;
+                    if (remainingCards === 0) {
+                        window.location.reload();
+                    }
+                }, 300);
+
+                showToast('Removed from favorites', 'success');
+            } else {
+                throw new Error(data.message || 'Failed to remove favorite');
+            }
+
+        } catch (error) {
+            console.error('Error removing favorite:', error);
+            showToast('Failed to remove favorite. Please try again.', 'error');
+            button.disabled = false;
+            button.style.opacity = '1';
+        }
+    }
+
+    /**
+     * Shows a toast notification to the user.
+     * @param {string} message - The message to display
+     * @param {string} type - The type of toast ('success', 'error', 'info')
+     */
+    function showToast(message, type = 'info') {
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all transform translate-y-0 opacity-100';
+
+        const colors = {
+            success: 'bg-green-600 text-white',
+            error: 'bg-red-600 text-white',
+            info: 'bg-blue-600 text-white'
+        };
+
+        toast.className += ' ' + (colors[type] || colors.info);
+        toast.textContent = message;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.transform = 'translateY(0)';
+        }, 10);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
