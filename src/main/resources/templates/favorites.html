@@ -23,6 +23,7 @@
             }
         }
     </script>
+    <script src="/js/app.js"></script>
 </head>
 
 <body class="bg-dark text-gray-100 font-sans antialiased">
@@ -183,42 +184,6 @@
             button.disabled = false;
             button.style.opacity = '1';
         }
-    }
-
-    /**
-     * Shows a toast notification to the user.
-     * @param {string} message - The message to display
-     * @param {string} type - The type of toast ('success', 'error', 'info')
-     */
-    function showToast(message, type = 'info') {
-        const existingToast = document.querySelector('.toast-notification');
-        if (existingToast) {
-            existingToast.remove();
-        }
-
-        const toast = document.createElement('div');
-        toast.className = 'toast-notification fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all transform translate-y-0 opacity-100';
-
-        const colors = {
-            success: 'bg-green-600 text-white',
-            error: 'bg-red-600 text-white',
-            info: 'bg-blue-600 text-white'
-        };
-
-        toast.className += ' ' + (colors[type] || colors.info);
-        toast.textContent = message;
-
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.transform = 'translateY(0)';
-        }, 10);
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(20px)';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
     }
 </script>
 
