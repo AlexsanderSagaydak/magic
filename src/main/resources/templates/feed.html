@@ -24,6 +24,32 @@
         }
     </script>
     <script src="/js/app.js"></script>
+    <style>
+        /* Filter collapse/expand animation */
+        .filter-collapsed .filter-container {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin-bottom: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .filter-container {
+            max-height: 150px;
+            opacity: 1;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Icon rotation */
+        .filter-toggle-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .filter-collapsed .filter-toggle-icon {
+            transform: rotate(180deg);
+        }
+    </style>
 </head>
 
 <body class="bg-dark text-gray-100 font-sans antialiased">
@@ -35,13 +61,17 @@
 <main class="min-h-screen bg-gradient-to-b from-dark via-dark-secondary to-dark py-12 px-4">
     <div class="max-w-7xl mx-auto">
 
-        <!-- FILTER BUTTONS -->
-        <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
-            <button class="filter-btn active px-4 py-2 rounded-lg bg-accent text-dark font-medium transition" onclick="filterBySpecialization('')">All Wizards</button>
-            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('White Magic')">White Magic</button>
-            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Black Magic')">Black Magic</button>
-            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Gray Magic')">Gray Magic</button>
-            <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Elemental Magic')">Elemental</button>
+        <!-- FILTER SECTION -->
+        <div class="filter-collapsed mb-8">
+            <!-- Collapsible Filter Container -->
+            <div class="filter-container flex gap-3 overflow-x-auto pb-2">
+                <button class="filter-btn active px-4 py-2 rounded-lg bg-accent text-dark font-medium transition" onclick="filterBySpecialization('')">All Wizards</button>
+                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('White Magic')">White Magic</button>
+                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Black Magic')">Black Magic</button>
+                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Gray Magic')">Gray Magic</button>
+                <button class="filter-btn px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 transition" onclick="filterBySpecialization('Elemental Magic')">Elemental</button>
+            </div>
+
         </div>
 
         <!-- NEW CENTERED LAYOUT -->
@@ -339,6 +369,12 @@
         event.target.classList.add('bg-accent', 'text-dark');
 
         fetchTotalCount().then(() => fetchProfiles(1));
+
+        // Auto-close filter after selection
+        const filterSection = document.querySelector('.filter-collapsed, div:has(.filter-container)');
+        if (filterSection && !filterSection.classList.contains('filter-collapsed')) {
+            toggleFilterVisibility();
+        }
     }
 
     function updatePagination() {
@@ -389,6 +425,22 @@
         await fetchTotalCount();
         fetchProfiles(1);
         renderMessages();
+
+        // Check if we should open filter (redirect from other pages)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('openFilter') === 'true') {
+            // Open filter if it's currently collapsed
+            const filterContainer = document.querySelector('.filter-container');
+            if (filterContainer && filterContainer.parentElement) {
+                const parent = filterContainer.parentElement;
+                if (parent.classList.contains('filter-collapsed')) {
+                    parent.classList.remove('filter-collapsed');
+                }
+            }
+            // Clean up URL (remove parameter)
+            const cleanUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
     });
 </script>
 

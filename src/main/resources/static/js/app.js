@@ -68,6 +68,22 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+/**
+ * Toggles filter visibility with smooth animation
+ * If not on feed page, redirects to feed with filter open
+ */
+function toggleFilterVisibility() {
+    const filterContainer = document.querySelector('.filter-container');
+
+    if (filterContainer && filterContainer.parentElement) {
+        // On feed page - toggle filter
+        filterContainer.parentElement.classList.toggle('filter-collapsed');
+    } else {
+        // Not on feed page - redirect to feed with filter open parameter
+        window.location.href = '/feed?openFilter=true';
+    }
+}
+
 // Auto-load favorite count on all pages
 document.addEventListener('DOMContentLoaded', () => {
     loadFavoriteCount();
