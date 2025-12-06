@@ -30,7 +30,7 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String specialization;
 
     @Column(nullable = false)

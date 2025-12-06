@@ -63,9 +63,11 @@ public class UserController {
             // Ensure user is marked as active
             user.setActive(true);
 
-            // Set default specialization for regular users
+            // Set empty specialization for all users (will be set in profile)
+            user.setSpecialization("");
+
+            // Create role-specific profiles
             if ("regular".equals(user.getRole())) {
-                user.setSpecialization("None");
                 RegularUserProfile regularProfile = new RegularUserProfile(user);
                 user.setRegularProfile(regularProfile);
             } else if ("wizard".equals(user.getRole())) {
@@ -170,6 +172,7 @@ public class UserController {
     @PostMapping("/profile/save")
     public String saveProfileDetails(@RequestParam(required = false) String firstName,
                                     @RequestParam(required = false) String lastName,
+                                    @RequestParam(required = true) String specialization,
                                     @RequestParam(required = false) String birthDate,
                                     @RequestParam(required = false) String birthPlace,
                                     @RequestParam(required = false) String birthTime,
@@ -199,6 +202,11 @@ public class UserController {
             }
             if (lastName != null && !lastName.isEmpty()) {
                 user.setLastName(lastName);
+            }
+
+            // Update specialization (required field)
+            if (specialization != null && !specialization.isEmpty()) {
+                user.setSpecialization(specialization);
             }
 
             // Update role-specific profiles
