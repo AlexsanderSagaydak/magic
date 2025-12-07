@@ -2,6 +2,7 @@ package com.magic_fans.wizards.repository;
 
 import com.magic_fans.wizards.model.WizardSkill;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,7 +20,9 @@ public interface WizardSkillRepository extends JpaRepository<WizardSkill, Long> 
     /**
      * Delete all skills for a specific wizard profile (used when re-saving)
      */
-    void deleteByWizardProfileId(int wizardProfileId);
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM WizardSkill ws WHERE ws.wizardProfile.id = :wizardProfileId")
+    void deleteByWizardProfileId(@Param("wizardProfileId") int wizardProfileId);
 
     /**
      * Find wizard profile IDs that have ANY of the specified skills (OR logic)

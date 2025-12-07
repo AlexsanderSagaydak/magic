@@ -26,27 +26,17 @@
 <!-- SIDEBAR FRAGMENT -->
 <aside th:fragment="sidebar" class="w-full lg:w-64 flex-shrink-0 flex flex-col gap-6 order-last lg:order-first sticky top-24 self-start">
 
-    <!-- CARD 1 — Filters & Matching -->
-    <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">
+    <!-- CARD 0 — Messages -->
+    <div id="messagesSection" class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">
+        <h3 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Messages
+        </h3>
 
-        <h2 class="text-gray-300 text-sm font-semibold mb-3">Filters & Matching</h2>
-
-        <div class="grid grid-cols-1 gap-3">
-
-            <button onclick="toggleFilterVisibility()"
-                    class="w-full px-4 py-3 bg-accent/20 border border-accent hover:bg-accent/30 rounded-lg
-                           flex items-center gap-3 cursor-pointer transition text-sm font-medium text-accent">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                </svg>
-                <span>Найти помощь</span>
-                <svg class="filter-toggle-icon w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-            </button>
-
-        </div>
+        <div id="messagesList" class="space-y-2"></div>
     </div>
 
     <!-- CARD 2 — Main menu (no title) -->
@@ -108,5 +98,514 @@
     </div>
 
 </aside>
+
+<!-- SKILLS ACCORDION FRAGMENT -->
+<!-- mode parameter: 'edit' for my-profile (with save button), 'filter' for feed (with reset button) -->
+<div th:fragment="skillsAccordion(mode)" class="space-y-2 wizard-skills-accordion">
+
+    <!-- ========================================= -->
+    <!-- SECTION 1: Навыки / Умения (COLLAPSED BY DEFAULT) -->
+    <!-- ========================================= -->
+    <div class="accordion-item">
+        <button type="button" onclick="toggleAccordion(this)"
+                class="w-full flex items-center justify-between px-3 py-2 bg-dark hover:bg-dark-tertiary rounded-lg text-sm font-medium transition">
+            <span>1. Навыки / Умения</span>
+            <svg class="chevron w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div class="accordion-content collapsed">
+
+            <!-- Subsection 1.1: Гадательные навыки (COLLAPSED) -->
+            <div class="accordion-subsection mt-2">
+                <button type="button" onclick="toggleAccordion(this)"
+                        class="w-full flex items-center justify-between px-2 py-1.5 bg-dark-tertiary/50 hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                    <span>Гадательные навыки</span>
+                    <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div class="accordion-subcontent collapsed">
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Таро" class="w-3 h-3">
+                        <span>Таро</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Руны" class="w-3 h-3">
+                        <span>Руны</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="И-цзин" class="w-3 h-3">
+                        <span>И-цзин</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Карты (общие)" class="w-3 h-3">
+                        <span>Карты (общие)</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Кофейная гуща" class="w-3 h-3">
+                        <span>Кофейная гуща</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Камни / кристаллы" class="w-3 h-3">
+                        <span>Камни / кристаллы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Ладонь (хиромантия)" class="w-3 h-3">
+                        <span>Ладонь (хиромантия)</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Аура" class="w-3 h-3">
+                        <span>Аура</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Сонники" class="w-3 h-3">
+                        <span>Сонники</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Нумерология" class="w-3 h-3">
+                        <span>Нумерология</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Астрология" class="w-3 h-3">
+                        <span>Астрология</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Приметы" class="w-3 h-3">
+                        <span>Приметы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Воск / отливки" class="w-3 h-3">
+                        <span>Воск / отливки</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_1" value="Зеркала" class="w-3 h-3">
+                        <span>Зеркала</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Subsection 1.2: Лечебные / телесные навыки (COLLAPSED) -->
+            <div class="accordion-subsection mt-2">
+                <button type="button" onclick="toggleAccordion(this)"
+                        class="w-full flex items-center justify-between px-2 py-1.5 bg-dark-tertiary/50 hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                    <span>Лечебные / телесные навыки</span>
+                    <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div class="accordion-subcontent collapsed">
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_2" value="Травы" class="w-3 h-3">
+                        <span>Травы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_2" value="Ароматы" class="w-3 h-3">
+                        <span>Ароматы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_2" value="Телесная диагностика" class="w-3 h-3">
+                        <span>Телесная диагностика</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_2" value="Психосоматика" class="w-3 h-3">
+                        <span>Психосоматика</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_2" value="Натуральные средства" class="w-3 h-3">
+                        <span>Натуральные средства</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_2" value="Эфирные масла" class="w-3 h-3">
+                        <span>Эфирные масла</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Subsection 1.3: Энергетические навыки (COLLAPSED) -->
+            <div class="accordion-subsection mt-2">
+                <button type="button" onclick="toggleAccordion(this)"
+                        class="w-full flex items-center justify-between px-2 py-1.5 bg-dark-tertiary/50 hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                    <span>Энергетические навыки</span>
+                    <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div class="accordion-subcontent collapsed">
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Чакры" class="w-3 h-3">
+                        <span>Чакры</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Энергополе" class="w-3 h-3">
+                        <span>Энергополе</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Космоэнергия" class="w-3 h-3">
+                        <span>Космоэнергия</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Каналы" class="w-3 h-3">
+                        <span>Каналы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Потоки энергии" class="w-3 h-3">
+                        <span>Потоки энергии</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Считывание энергии" class="w-3 h-3">
+                        <span>Считывание энергии</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_3" value="Очищение энергии" class="w-3 h-3">
+                        <span>Очищение энергии</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Subsection 1.4: Психотехники (COLLAPSED) -->
+            <div class="accordion-subsection mt-2">
+                <button type="button" onclick="toggleAccordion(this)"
+                        class="w-full flex items-center justify-between px-2 py-1.5 bg-dark-tertiary/50 hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                    <span>Психотехники</span>
+                    <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div class="accordion-subcontent collapsed">
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_4" value="Гипноз" class="w-3 h-3">
+                        <span>Гипноз</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_4" value="Транс" class="w-3 h-3">
+                        <span>Транс</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_4" value="Регрессии" class="w-3 h-3">
+                        <span>Регрессии</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_4" value="Психоэнергетика" class="w-3 h-3">
+                        <span>Психоэнергетика</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_4" value="Медитации" class="w-3 h-3">
+                        <span>Медитации</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_4" value="Самопрограммирование (тета-хиллинг)" class="w-3 h-3">
+                        <span>Самопрограммирование (тета-хиллинг)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Subsection 1.5: Обрядовые навыки (COLLAPSED) -->
+            <div class="accordion-subsection mt-2">
+                <button type="button" onclick="toggleAccordion(this)"
+                        class="w-full flex items-center justify-between px-2 py-1.5 bg-dark-tertiary/50 hover:bg-dark-tertiary rounded text-xs font-medium transition">
+                    <span>Обрядовые навыки</span>
+                    <svg class="chevron w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div class="accordion-subcontent collapsed">
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Словесная защита" class="w-3 h-3">
+                        <span>Словесная защита</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Лунные ритуалы" class="w-3 h-3">
+                        <span>Лунные ритуалы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Ритуалы новолуния" class="w-3 h-3">
+                        <span>Ритуалы новолуния</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Ритуалы полнолуния" class="w-3 h-3">
+                        <span>Ритуалы полнолуния</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Манифестации" class="w-3 h-3">
+                        <span>Манифестации</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Молитвенные формы" class="w-3 h-3">
+                        <span>Молитвенные формы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Символические ритуалы" class="w-3 h-3">
+                        <span>Символические ритуалы</span>
+                    </label>
+                    <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                        <input type="checkbox" data-section="section1" data-subsection="subsection1_5" value="Визуализация желаний" class="w-3 h-3">
+                        <span>Визуализация желаний</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- SECTION 2: Сфера работы (COLLAPSED) -->
+    <!-- ========================================= -->
+    <div class="accordion-item">
+        <button type="button" onclick="toggleAccordion(this)"
+                class="w-full flex items-center justify-between px-3 py-2 bg-dark hover:bg-dark-tertiary rounded-lg text-sm font-medium transition">
+            <span>2. Сфера работы</span>
+            <svg class="chevron w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div class="accordion-content collapsed">
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Судьба" class="w-3 h-3">
+                <span>Судьба</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Характер" class="w-3 h-3">
+                <span>Характер</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Психология" class="w-3 h-3">
+                <span>Психология</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Отношения" class="w-3 h-3">
+                <span>Отношения</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Деньги" class="w-3 h-3">
+                <span>Деньги</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Здоровье" class="w-3 h-3">
+                <span>Здоровье</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Энергия" class="w-3 h-3">
+                <span>Энергия</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Саморазвитие" class="w-3 h-3">
+                <span>Саморазвитие</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Духи / контакт" class="w-3 h-3">
+                <span>Духи / контакт</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Обряды" class="w-3 h-3">
+                <span>Обряды</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Удача" class="w-3 h-3">
+                <span>Удача</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Карьера" class="w-3 h-3">
+                <span>Карьера</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section2" value="Защита" class="w-3 h-3">
+                <span>Защита</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- SECTION 3: Стиль практики (COLLAPSED) -->
+    <!-- ========================================= -->
+    <div class="accordion-item">
+        <button type="button" onclick="toggleAccordion(this)"
+                class="w-full flex items-center justify-between px-3 py-2 bg-dark hover:bg-dark-tertiary rounded-lg text-sm font-medium transition">
+            <span>3. Стиль практики</span>
+            <svg class="chevron w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div class="accordion-content collapsed">
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Эзотерический" class="w-3 h-3">
+                <span>Эзотерический</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Традиционный" class="w-3 h-3">
+                <span>Традиционный</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Оккультный" class="w-3 h-3">
+                <span>Оккультный</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Психологический" class="w-3 h-3">
+                <span>Психологический</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Нью-эйдж" class="w-3 h-3">
+                <span>Нью-эйдж</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Символический" class="w-3 h-3">
+                <span>Символический</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Астрологический" class="w-3 h-3">
+                <span>Астрологический</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section3" value="Ритуальный" class="w-3 h-3">
+                <span>Ритуальный</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- SECTION 4: Способ работы / формат (COLLAPSED) -->
+    <!-- ========================================= -->
+    <div class="accordion-item">
+        <button type="button" onclick="toggleAccordion(this)"
+                class="w-full flex items-center justify-between px-3 py-2 bg-dark hover:bg-dark-tertiary rounded-lg text-sm font-medium transition">
+            <span>4. Способ работы / формат</span>
+            <svg class="chevron w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div class="accordion-content collapsed">
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Вербальный (словесные формулы, интерпретации)" class="w-3 h-3">
+                <span>Вербальный (словесные формулы, интерпретации)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Визуальный (карты, руны, линии руки, символы)" class="w-3 h-3">
+                <span>Визуальный (карты, руны, линии руки, символы)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Телесно-ориентированный (дыхание, телесная диагностика)" class="w-3 h-3">
+                <span>Телесно-ориентированный (дыхание, телесная диагностика)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Энергетический (чакры, поле, каналы)" class="w-3 h-3">
+                <span>Энергетический (чакры, поле, каналы)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Медитативный (гипноз, транс, визуализация)" class="w-3 h-3">
+                <span>Медитативный (гипноз, транс, визуализация)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Образный / архетипический (работа с символами)" class="w-3 h-3">
+                <span>Образный / архетипический (работа с символами)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section4" value="Предметный (камни, свечи, травы, масла)" class="w-3 h-3">
+                <span>Предметный (камни, свечи, травы, масла)</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- SECTION 5: Уровень взаимодействия (COLLAPSED) -->
+    <!-- ========================================= -->
+    <div class="accordion-item">
+        <button type="button" onclick="toggleAccordion(this)"
+                class="w-full flex items-center justify-between px-3 py-2 bg-dark hover:bg-dark-tertiary rounded-lg text-sm font-medium transition">
+            <span>5. Уровень взаимодействия</span>
+            <svg class="chevron w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div class="accordion-content collapsed">
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section5" value="Контакт с духами" class="w-3 h-3">
+                <span>Контакт с духами</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section5" value="Контакт с энергиями" class="w-3 h-3">
+                <span>Контакт с энергиями</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section5" value="Контакт с «высшими силами»" class="w-3 h-3">
+                <span>Контакт с «высшими силами»</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section5" value="Только психологические методы" class="w-3 h-3">
+                <span>Только психологические методы</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section5" value="Только символические методы" class="w-3 h-3">
+                <span>Только символические методы</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- SECTION 7: Дополнительные фильтры (COLLAPSED) -->
+    <!-- ========================================= -->
+    <div class="accordion-item">
+        <button type="button" onclick="toggleAccordion(this)"
+                class="w-full flex items-center justify-between px-3 py-2 bg-dark hover:bg-dark-tertiary rounded-lg text-sm font-medium transition">
+            <span>7. Дополнительные фильтры</span>
+            <svg class="chevron w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div class="accordion-content collapsed">
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Работа по фото" class="w-3 h-3">
+                <span>Работа по фото</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Онлайн-практики" class="w-3 h-3">
+                <span>Онлайн-практики</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Работа с телом" class="w-3 h-3">
+                <span>Работа с телом</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Работа с подсознанием" class="w-3 h-3">
+                <span>Работа с подсознанием</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Работа со снами" class="w-3 h-3">
+                <span>Работа со снами</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Работа с символами" class="w-3 h-3">
+                <span>Работа с символами</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Работа с природными материалами" class="w-3 h-3">
+                <span>Работа с природными материалами</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Ритуальная эстетика (кристаллы, свечи, алтари)" class="w-3 h-3">
+                <span>Ритуальная эстетика (кристаллы, свечи, алтари)</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Мини-ритуалы / быстрые техники" class="w-3 h-3">
+                <span>Мини-ритуалы / быстрые техники</span>
+            </label>
+            <label class="skill-checkbox flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <input type="checkbox" data-section="section7" value="Глубинная работа (долгие процессы)" class="w-3 h-3">
+                <span>Глубинная работа (долгие процессы)</span>
+            </label>
+        </div>
+    </div>
+
+</div>
 
 </html>

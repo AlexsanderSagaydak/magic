@@ -4,6 +4,8 @@ import com.magic_fans.wizards.model.WizardProfile;
 import com.magic_fans.wizards.model.WizardSkill;
 import com.magic_fans.wizards.repository.WizardProfileRepository;
 import com.magic_fans.wizards.repository.WizardSkillRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,9 @@ public class WizardSkillsService {
 
     @Autowired
     private WizardProfileRepository wizardProfileRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * Get skills for a wizard in structured format
@@ -83,6 +88,10 @@ public class WizardSkillsService {
 
         // Delete existing skills
         wizardSkillRepository.deleteByWizardProfileId(wizardProfileId);
+
+        // Force flush to execute DELETE before INSERT
+        entityManager.flush();
+        entityManager.clear();
 
         List<WizardSkill> newSkills = new ArrayList<>();
 

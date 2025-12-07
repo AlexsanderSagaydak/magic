@@ -18,7 +18,12 @@
       "Bash(timeout:*)",
       "Bash(mvn spring-boot:run:*)",
       "Bash(del \"D:\\wizards\\src\\main\\resources\\templates\\home.html\")",
-      "Bash(powershell -Command \"Stop-Process -Id 27936,33468 -Force\")"
+      "Bash(powershell -Command \"Stop-Process -Id 27936,33468 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 35904,37796 -Force\":*)",
+      "Bash(powershell -Command \"Stop-Process -Id 13996,35484 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 44052,35948 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 36084,41060 -Force\")",
+      "Bash(powershell -Command:*)"
     ],
     "deny": [],
     "ask": []
