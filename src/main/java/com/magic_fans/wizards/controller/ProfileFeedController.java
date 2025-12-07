@@ -314,6 +314,11 @@ public class ProfileFeedController {
         // TODO: Implement actual online status checking (when websocket or last activity tracking is added)
         dto.setOnline(false);
 
+        // Get wizard skills if user is a wizard and has a wizard profile
+        if ("wizard".equals(user.getRole()) && user.getWizardProfile() != null) {
+            dto.setSkills(wizardSkillsService.getAllSkillsForWizard(user.getWizardProfile().getId()));
+        }
+
         return dto;
     }
 

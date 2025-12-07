@@ -5,6 +5,7 @@ import com.magic_fans.wizards.model.RegularUserProfile;
 import com.magic_fans.wizards.model.WizardProfile;
 import com.magic_fans.wizards.model.Subscription;
 import com.magic_fans.wizards.service.UserService;
+import com.magic_fans.wizards.service.WizardSkillsService;
 import com.magic_fans.wizards.repository.SubscriptionRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class UserController {
 
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private WizardSkillsService wizardSkillsService;
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -140,6 +144,13 @@ public class UserController {
                     if (currentUser.getId() == id) {
                         model.addAttribute("user", viewedUser);
                         model.addAttribute("isOwnProfile", true);
+
+                        // Add skills for wizards
+                        if ("wizard".equals(viewedUser.getRole()) && viewedUser.getWizardProfile() != null) {
+                            model.addAttribute("userSkills",
+                                wizardSkillsService.getAllSkillsForWizard(viewedUser.getWizardProfile().getId()));
+                        }
+
                         return "my-profile";
                     }
 

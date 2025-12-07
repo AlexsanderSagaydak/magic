@@ -1,5 +1,7 @@
 package com.magic_fans.wizards.dto;
 
+import java.util.List;
+
 /**
  * Data Transfer Object for user profile in feed/listing view.
  * Used to send user profile data to frontend for infinite scroll feed.
@@ -17,6 +19,7 @@ public class UserProfileDTO {
     private String avatarUrl;
     private String profileImageUrl;
     private String videoUrl;
+    private List<String> skills;
 
     /**
      * Default constructor for UserProfileDTO.
@@ -211,5 +214,23 @@ public class UserProfileDTO {
      */
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
+    }
+
+    /**
+     * Gets the list of wizard skills.
+     *
+     * @return the list of skills
+     */
+    public List<String> getSkills() {
+        return skills;
+    }
+
+    /**
+     * Sets the list of wizard skills.
+     *
+     * @param skills the list of skills to set
+     */
+    public void setSkills(List<String> skills) {
+        this.skills = skills;
     }
 }

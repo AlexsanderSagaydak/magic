@@ -140,6 +140,18 @@
                               class="inline-block px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-400 font-medium">
                             Not set
                         </span>
+
+                        <!-- SKILLS TAGS (for wizards) -->
+                        <div th:if="${user.role == 'wizard' && userSkills != null && !userSkills.isEmpty()}" class="mt-4">
+                            <div class="flex flex-wrap gap-2">
+                                <span th:each="skill, iterStat : ${userSkills}"
+                                      th:if="${iterStat.index < (userSkills.size() > 10 ? 7 : userSkills.size())}"
+                                      class="inline-block bg-dark-tertiary border border-dark-tertiary hover:border-accent px-2 py-1 rounded text-xs"
+                                      th:text="${skill}">
+                                </span>
+                                <span th:if="${userSkills.size() > 10}" class="text-xs text-gray-400 self-center">...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

@@ -1,6 +1,7 @@
 package com.magic_fans.wizards.controller;
 
 import com.magic_fans.wizards.service.UserService;
+import com.magic_fans.wizards.service.WizardSkillsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WizardSkillsService wizardSkillsService;
 
     @GetMapping("/")
     public String home(Model model, HttpServletResponse response) {
@@ -83,10 +87,18 @@ public class HomeController {
 
         // Get current user by username
         String username = auth.getName();
-        var user = userService.getUserByUsername(username);
+        var userOpt = userService.getUserByUsername(username);
 
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
+        if (userOpt.isPresent()) {
+            var user = userOpt.get();
+            model.addAttribute("user", user);
+
+            // Add skills for wizards
+            if ("wizard".equals(user.getRole()) && user.getWizardProfile() != null) {
+                model.addAttribute("userSkills",
+                    wizardSkillsService.getAllSkillsForWizard(user.getWizardProfile().getId()));
+            }
+
             return "my-profile";
         }
 

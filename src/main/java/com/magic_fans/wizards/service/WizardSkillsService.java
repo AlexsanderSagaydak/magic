@@ -185,4 +185,16 @@ public class WizardSkillsService {
     public boolean hasSkill(int wizardProfileId, String skillName) {
         return wizardSkillRepository.existsByWizardProfileIdAndSkillName(wizardProfileId, skillName);
     }
+
+    /**
+     * Get all skills for a wizard as a flat list (for displaying as tags)
+     */
+    public List<String> getAllSkillsForWizard(int wizardProfileId) {
+        List<WizardSkill> skills = wizardSkillRepository.findByWizardProfileId(wizardProfileId);
+        List<String> skillNames = new ArrayList<>();
+        for (WizardSkill skill : skills) {
+            skillNames.add(skill.getSkillName());
+        }
+        return skillNames;
+    }
 }
