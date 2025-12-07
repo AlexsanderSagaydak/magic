@@ -146,7 +146,7 @@
                             <div class="flex flex-wrap gap-2">
                                 <span th:each="skill, iterStat : ${userSkills}"
                                       th:if="${iterStat.index < (userSkills.size() > 10 ? 7 : userSkills.size())}"
-                                      class="inline-block bg-dark-tertiary border border-dark-tertiary hover:border-accent px-2 py-1 rounded text-xs"
+                                      class="inline-block bg-dark-tertiary border border-accent px-3 py-1 rounded-full text-xs"
                                       th:text="${skill}">
                                 </span>
                                 <span th:if="${userSkills.size() > 10}" class="text-xs text-gray-400 self-center">...</span>
