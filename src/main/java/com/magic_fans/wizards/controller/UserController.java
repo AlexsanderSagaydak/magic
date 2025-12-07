@@ -184,6 +184,7 @@ public class UserController {
     public String saveProfileDetails(@RequestParam(required = false) String firstName,
                                     @RequestParam(required = false) String lastName,
                                     @RequestParam(required = true) String specialization,
+                                    @RequestParam(required = false) String aboutMe,
                                     @RequestParam(required = false) String birthDate,
                                     @RequestParam(required = false) String birthPlace,
                                     @RequestParam(required = false) String birthTime,
@@ -218,6 +219,11 @@ public class UserController {
             // Update specialization (required field)
             if (specialization != null && !specialization.isEmpty()) {
                 user.setSpecialization(specialization);
+            }
+
+            // Update about me
+            if (aboutMe != null) {
+                user.setAboutMe(aboutMe.length() > 500 ? aboutMe.substring(0, 500) : aboutMe);
             }
 
             // Update role-specific profiles

@@ -83,6 +83,14 @@
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
+
+        /* Line clamp for about me text */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -245,6 +253,10 @@
                         ).join('')}
                         ${profile.skills.length > 10 ? '<span class="text-xs text-gray-400">...</span>' : ''}
                     </div>
+                ` : ''}
+
+                ${profile.aboutMe && profile.aboutMe.trim() ? `
+                    <p class="text-xs text-gray-400 mt-3 line-clamp-2">${profile.aboutMe}</p>
                 ` : ''}
             </div>
 

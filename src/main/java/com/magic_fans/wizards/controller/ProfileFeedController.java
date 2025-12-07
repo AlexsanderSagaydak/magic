@@ -301,6 +301,7 @@ public class ProfileFeedController {
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setSpecialization(user.getSpecialization());
+        dto.setAboutMe(user.getAboutMe());
 
         // Use DiceBear API for dynamic avatars based on username
         String seed = user.getUsername();

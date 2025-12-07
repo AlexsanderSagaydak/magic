@@ -363,6 +363,31 @@
                     </div>
 
 
+                    <!-- ABOUT ME -->
+                    <div class="bg-dark p-6 rounded-xl border border-dark-tertiary">
+                        <h4 class="text-lg font-semibold mb-4">About Me</h4>
+
+                        <div class="view-field">
+                            <p class="text-gray-400 text-sm mb-2">Bio</p>
+                            <p class="text-gray-100" th:text="${user.aboutMe != null && !user.aboutMe.isEmpty() ? user.aboutMe : 'No bio added yet'}"></p>
+                        </div>
+
+                        <div class="edit-field">
+                            <label class="text-gray-400 text-sm mb-2 block">
+                                Tell us about yourself
+                            </label>
+                            <textarea name="aboutMe" id="aboutMeField" maxlength="500"
+                                      th:text="${user.aboutMe}"
+                                      class="w-full px-4 py-3 bg-dark-tertiary border border-dark-tertiary rounded-lg text-gray-100 focus:border-accent focus:ring-accent resize-none"
+                                      rows="4"
+                                      placeholder="Share a bit about yourself..."></textarea>
+                            <div class="flex justify-end mt-1">
+                                <span id="charCount" class="text-xs text-gray-500">0 / 500</span>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <!-- SPECIALIZATION -->
                     <div class="bg-dark p-6 rounded-xl border border-dark-tertiary">
                         <h4 class="text-lg font-semibold mb-4">Specialization</h4>
@@ -1108,6 +1133,32 @@
         const accordion = document.querySelector('.wizard-skills-accordion');
         if (accordion) {
             loadWizardSkills();
+        }
+
+        // Character counter for About Me field
+        const aboutMeField = document.getElementById('aboutMeField');
+        const charCount = document.getElementById('charCount');
+
+        if (aboutMeField && charCount) {
+            // Update counter on page load
+            updateCharCount();
+
+            // Update counter on input
+            aboutMeField.addEventListener('input', updateCharCount);
+
+            function updateCharCount() {
+                const length = aboutMeField.value.length;
+                charCount.textContent = `${length} / 500`;
+
+                // Change color based on remaining characters
+                if (length > 450) {
+                    charCount.classList.add('text-yellow-500');
+                    charCount.classList.remove('text-gray-500');
+                } else {
+                    charCount.classList.add('text-gray-500');
+                    charCount.classList.remove('text-yellow-500');
+                }
+            }
         }
     });
 </script>

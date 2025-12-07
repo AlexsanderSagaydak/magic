@@ -20,6 +20,7 @@ public class UserProfileDTO {
     private String profileImageUrl;
     private String videoUrl;
     private List<String> skills;
+    private String aboutMe;
 
     /**
      * Default constructor for UserProfileDTO.
@@ -232,5 +233,23 @@ public class UserProfileDTO {
      */
     public void setSkills(List<String> skills) {
         this.skills = skills;
+    }
+
+    /**
+     * Gets the about me text.
+     *
+     * @return the about me text
+     */
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    /**
+     * Sets the about me text.
+     *
+     * @param aboutMe the about me text to set
+     */
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
     }
 }

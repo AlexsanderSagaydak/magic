@@ -33,6 +33,9 @@ public class User implements UserDetails {
     @Column(nullable = true)
     private String specialization;
 
+    @Column(length = 500)
+    private String aboutMe;
+
     @Column(nullable = false)
     private String role = "regular";
 
@@ -115,6 +118,14 @@ public class User implements UserDetails {
 
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
+    }
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
     }
 
     public String getRole() {
