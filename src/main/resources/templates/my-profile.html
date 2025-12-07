@@ -77,23 +77,37 @@
         .skill-checkbox:hover {
             background-color: rgba(59, 130, 246, 0.1);
         }
+
+        /* Hide scrollbars */
+        section::-webkit-scrollbar,
+        aside::-webkit-scrollbar {
+            display: none;
+        }
+
+        section,
+        aside {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
 </head>
 
-<body class="bg-dark text-gray-100 font-sans antialiased">
+<body class="h-screen overflow-hidden bg-dark text-gray-100 font-sans antialiased flex flex-col">
 
 <!-- NAVIGATION -->
 <div th:replace="~{fragments::header}"></div>
 
 <!-- MAIN CONTENT -->
-<main class="min-h-screen bg-gradient-to-b from-dark via-dark-secondary to-dark py-12 px-4">
-    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-center gap-8">
+<main class="flex-1 flex bg-gradient-to-b from-dark via-dark-secondary to-dark overflow-hidden mt-16">
+    <div class="w-full max-w-7xl mx-auto flex gap-8 px-4 pt-6 pb-12">
 
         <!-- LEFT SIDEBAR -->
-        <div th:replace="~{fragments::sidebar}"></div>
+        <div class="w-full lg:w-64 flex-shrink-0 overflow-y-auto">
+            <div th:replace="~{fragments::sidebar}"></div>
+        </div>
 
-        <!-- PROFILE CONTENT -->
-        <section class="flex-1 max-w-3xl mx-auto flex flex-col">
+        <!-- PROFILE CONTENT (scrollable center) -->
+        <section class="flex-1 max-w-3xl overflow-y-auto px-4">
 
             <!-- PROFILE CARD -->
             <div id="profileCard" class="bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden p-8">
@@ -401,8 +415,8 @@
         </section>
 
         <!-- RIGHT SIDEBAR - WIZARD SKILLS ACCORDION -->
-        <aside th:if="${user.role == 'wizard'}" class="w-full lg:w-80 flex-shrink-0">
-            <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 sticky top-24">
+        <aside th:if="${user.role == 'wizard'}" class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
+            <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">
 
                 <h3 class="text-lg font-bold mb-4 text-gray-100">Мои навыки</h3>
 

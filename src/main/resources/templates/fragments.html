@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<!-- HEADER FRAGMENT -->
-<header th:fragment="header" class="sticky top-0 z-50 bg-dark-secondary border-b border-dark-tertiary">
+<!-- HEADER FRAGMENT (for authenticated pages) -->
+<header th:fragment="header" class="fixed top-0 left-0 right-0 z-50 bg-dark-secondary border-b border-dark-tertiary">
     <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
             ✨ Wizards
@@ -12,6 +12,18 @@
             <a href="/feed" class="px-4 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 text-gray-100 font-medium transition">
                 Feed
             </a>
+
+            <!-- Language Selector -->
+            <div class="flex gap-2">
+                <a href="?lang=en" class="px-3 py-2 rounded-lg text-sm font-medium transition"
+                   th:classappend="${#locale.language == 'en' ? 'bg-accent text-dark' : 'bg-dark-tertiary hover:bg-dark-tertiary/80'}">
+                    EN
+                </a>
+                <a href="?lang=ru" class="px-3 py-2 rounded-lg text-sm font-medium transition"
+                   th:classappend="${#locale.language == 'ru' ? 'bg-accent text-dark' : 'bg-dark-tertiary hover:bg-dark-tertiary/80'}">
+                    RU
+                </a>
+            </div>
 
             <form action="/logout" method="post">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
@@ -23,8 +35,36 @@
     </nav>
 </header>
 
+<!-- HEADER FRAGMENT (for unauthenticated pages like login/register) -->
+<nav th:fragment="headerPublic" class="bg-dark-secondary border-b border-dark-tertiary">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                ✨ <span th:text="#{nav.title}">Wizards</span>
+            </h1>
+        </div>
+        <div class="flex items-center gap-6">
+            <ul class="flex gap-6">
+                <li><a href="/" th:text="#{nav.home}" class="hover:text-accent transition">Home</a></li>
+                <li><a href="/users/register" th:text="#{nav.register}" class="hover:text-accent transition">Register</a></li>
+            </ul>
+            <!-- Language Selector -->
+            <div class="flex gap-2">
+                <a href="?lang=en" class="px-3 py-2 rounded-lg text-sm font-medium transition"
+                   th:classappend="${#locale.language == 'en' ? 'bg-accent text-dark' : 'bg-dark-tertiary hover:bg-dark-tertiary/80'}">
+                    <span th:text="#{lang.en}">EN</span>
+                </a>
+                <a href="?lang=ru" class="px-3 py-2 rounded-lg text-sm font-medium transition"
+                   th:classappend="${#locale.language == 'ru' ? 'bg-accent text-dark' : 'bg-dark-tertiary hover:bg-dark-tertiary/80'}">
+                    <span th:text="#{lang.ru}">RU</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
 <!-- SIDEBAR FRAGMENT -->
-<aside th:fragment="sidebar" class="w-full lg:w-64 flex-shrink-0 flex flex-col gap-6 order-last lg:order-first sticky top-24 self-start">
+<aside th:fragment="sidebar" class="w-full lg:w-64 flex-shrink-0 flex flex-col gap-6 order-last lg:order-first">
 
     <!-- CARD 0 — Messages -->
     <div id="messagesSection" class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">

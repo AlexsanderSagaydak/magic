@@ -72,75 +72,48 @@
             background-color: rgba(59, 130, 246, 0.1);
         }
 
-        /* Right sidebar scroll */
-        .right-sidebar-scroll {
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            overflow-x: hidden;
+        /* Hide scrollbars */
+        section::-webkit-scrollbar,
+        aside::-webkit-scrollbar {
+            display: none;
         }
 
-        .right-sidebar-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .right-sidebar-scroll::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-
-        .right-sidebar-scroll::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 3px;
+        section,
+        aside {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
     </style>
 </head>
 
-<body class="bg-dark text-gray-100 font-sans antialiased">
+<body class="h-screen overflow-hidden bg-dark text-gray-100 font-sans antialiased flex flex-col">
 
 <!-- NAVIGATION -->
 <div th:replace="~{fragments::header}"></div>
 
 <!-- MAIN CONTENT -->
-<main class="min-h-screen bg-gradient-to-b from-dark via-dark-secondary to-dark py-12 px-4">
-    <div class="max-w-7xl mx-auto">
+<main class="flex-1 flex bg-gradient-to-b from-dark via-dark-secondary to-dark overflow-hidden mt-16">
+    <div class="w-full max-w-7xl mx-auto flex gap-8 px-4 pt-6 pb-12">
 
-        <!-- NEW CENTERED LAYOUT -->
-        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-center gap-8 mb-12">
-
-            <!-- LEFT SIDEBAR -->
+        <!-- LEFT SIDEBAR -->
+        <div class="w-full lg:w-64 flex-shrink-0 overflow-y-auto">
             <div th:replace="~{fragments::sidebar}"></div>
+        </div>
 
-            <!-- FEED -->
-            <section class="flex-1 max-w-3xl mx-auto flex flex-col">
-                <div id="feedContainer" class="space-y-6"></div>
+        <!-- FEED (scrollable center) -->
+        <section class="flex-1 max-w-3xl overflow-y-auto px-4">
+            <div id="feedContainer" class="space-y-6"></div>
 
                 <div id="loadingIndicator" style="display: none;" class="flex justify-center py-12">
                     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
                 </div>
 
-                <div id="noProfiles" style="display: none;" class="text-center py-12">
-                    <p class="text-gray-400 text-lg">🧙 No wizards found</p>
-                </div>
-            </section>
+            <div id="noProfiles" style="display: none;" class="text-center py-12">
+                <p class="text-gray-400 text-lg">🧙 No wizards found</p>
+            </div>
 
-            <!-- RIGHT SIDEBAR - SKILLS FILTER -->
-            <aside class="w-full lg:w-80 flex-shrink-0">
-                <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 sticky top-24">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-gray-100">Фильтр по навыкам</h3>
-                        <button onclick="clearAllFilters()" class="text-xs text-accent hover:text-blue-400 transition">Сбросить</button>
-                    </div>
-
-                    <div class="right-sidebar-scroll">
-                        <!-- Skills Accordion Fragment -->
-                        <div th:replace="~{fragments::skillsAccordion('filter')}"></div>
-                    </div>
-                </div>
-            </aside>
-
-        </div>
-
-        <!-- PAGINATION -->
-        <div class="mt-12 flex justify-center gap-4">
+            <!-- PAGINATION -->
+            <div class="mt-12 flex justify-center gap-4">
             <button id="prevBtn" class="px-6 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 transition disabled:opacity-50" onclick="previousPage()" disabled>
                 ← Previous
             </button>
@@ -150,7 +123,23 @@
             <button id="nextBtn" class="px-6 py-2 rounded-lg bg-dark-tertiary hover:bg-dark-tertiary/80 transition disabled:opacity-50" onclick="nextPage()" disabled>
                 Next →
             </button>
-        </div>
+            </div>
+        </section>
+
+        <!-- RIGHT SIDEBAR - SKILLS FILTER -->
+        <aside class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
+            <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-100">Фильтр по навыкам</h3>
+                    <button onclick="clearAllFilters()" class="text-xs text-accent hover:text-blue-400 transition">Сбросить</button>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- Skills Accordion Fragment -->
+                    <div th:replace="~{fragments::skillsAccordion('filter')}"></div>
+                </div>
+            </div>
+        </aside>
 
     </div>
 </main>
