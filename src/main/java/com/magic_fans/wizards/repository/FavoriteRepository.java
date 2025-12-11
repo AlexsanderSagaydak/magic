@@ -19,4 +19,10 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     long countByUserId(int userId);
 
     void deleteByUserIdAndFavoriteWizardId(int userId, int favoriteWizardId);
+
+    // Get list of users who added this wizard to favorites
+    List<Favorite> findByFavoriteWizardIdOrderByAddedAtDesc(int wizardId);
+
+    // Count how many users added this wizard to favorites
+    long countByFavoriteWizardId(int wizardId);
 }

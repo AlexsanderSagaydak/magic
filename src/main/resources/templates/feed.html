@@ -233,27 +233,6 @@
         }
     }
 
-    function renderMessages() {
-        const messagesList = document.getElementById('messagesList');
-
-        const mockMessages = [
-            { id: 1, sender: 'Merlin', preview: 'Hey, how are you doing?', unread: true },
-            { id: 2, sender: 'Dumbledore', preview: 'The next meeting is...', unread: true },
-            { id: 3, sender: 'Gandalf', preview: 'Thanks for the invite!', unread: false }
-        ];
-
-        messagesList.innerHTML = mockMessages.map(msg => `
-        <div class="message-item p-3 bg-dark hover:bg-dark-tertiary rounded-lg cursor-pointer transition
-            ${msg.unread ? 'border-l-2 border-accent' : ''}">
-            <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium">${msg.sender}</span>
-                ${msg.unread ? '<span class="w-2 h-2 bg-accent rounded-full"></span>' : ''}
-            </div>
-            <p class="text-xs text-gray-400 truncate">${msg.preview}</p>
-        </div>
-    `).join('');
-    }
-
     /**
      * Toggles accordion section open/closed
      */
@@ -351,7 +330,6 @@
     document.addEventListener('DOMContentLoaded', async () => {
         await fetchTotalCount();
         fetchProfiles(1);
-        renderMessages();
 
         // Add event listeners to all skill checkboxes
         document.querySelectorAll('.wizard-skills-accordion input[type="checkbox"]').forEach(checkbox => {

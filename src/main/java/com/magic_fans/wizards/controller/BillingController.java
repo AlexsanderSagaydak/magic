@@ -1,7 +1,11 @@
 package com.magic_fans.wizards.controller;
 
+import com.magic_fans.wizards.model.Favorite;
+import com.magic_fans.wizards.model.Subscription;
 import com.magic_fans.wizards.model.User;
 import com.magic_fans.wizards.model.WizardService;
+import com.magic_fans.wizards.service.FavoriteService;
+import com.magic_fans.wizards.service.SubscriptionService;
 import com.magic_fans.wizards.service.UserService;
 import com.magic_fans.wizards.service.WizardServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/billing")
@@ -25,6 +30,12 @@ public class BillingController {
 
     @Autowired
     private WizardServiceService wizardServiceService;
+
+    @Autowired
+    private FavoriteService favoriteService;
+
+    @Autowired
+    private SubscriptionService subscriptionService;
 
     @GetMapping("")
     public String billing(Model model) {
@@ -48,6 +59,13 @@ public class BillingController {
         if ("wizard".equals(user.getRole())) {
             List<WizardService> services = wizardServiceService.getServicesByUserId(user.getId());
             model.addAttribute("services", services);
+
+            // Load statistics
+            long favoritesCount = favoriteService.getWizardFavoritesCount(user.getId());
+            long subscribersCount = subscriptionService.getWizardSubscribersCount(user.getId());
+            model.addAttribute("favoritesCount", favoritesCount);
+            model.addAttribute("subscribersCount", subscribersCount);
+
             return "billing-wizard";
         } else {
             return "billing-regular";
@@ -123,6 +141,110 @@ public class BillingController {
 
             wizardServiceService.deleteService(id);
             response.put("success", true);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics/favorites")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getFavoritesStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+                response.put("success", false);
+                response.put("message", "Not authenticated");
+                return ResponseEntity.ok(response);
+            }
+
+            String username = auth.getName();
+            var userOpt = userService.getUserByUsername(username);
+
+            if (userOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "User not found");
+                return ResponseEntity.ok(response);
+            }
+
+            User user = userOpt.get();
+
+            // Get list of users who added this wizard to favorites
+            List<Favorite> favorites = favoriteService.getWizardFavoredBy(user.getId());
+
+            // Map to simple user data
+            List<Map<String, Object>> users = favorites.stream()
+                .map(fav -> {
+                    Map<String, Object> userData = new HashMap<>();
+                    User favUser = fav.getUser();
+                    userData.put("id", favUser.getId());
+                    userData.put("username", favUser.getUsername());
+                    userData.put("firstName", favUser.getFirstName());
+                    userData.put("lastName", favUser.getLastName());
+                    userData.put("addedAt", fav.getAddedAt().toString());
+                    return userData;
+                })
+                .collect(Collectors.toList());
+
+            response.put("success", true);
+            response.put("count", favorites.size());
+            response.put("users", users);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics/subscribers")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getSubscribersStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+                response.put("success", false);
+                response.put("message", "Not authenticated");
+                return ResponseEntity.ok(response);
+            }
+
+            String username = auth.getName();
+            var userOpt = userService.getUserByUsername(username);
+
+            if (userOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "User not found");
+                return ResponseEntity.ok(response);
+            }
+
+            User user = userOpt.get();
+
+            // Get list of subscribers
+            List<Subscription> subscriptions = subscriptionService.getWizardSubscribers(user.getId());
+
+            // Map to simple user data
+            List<Map<String, Object>> users = subscriptions.stream()
+                .map(sub -> {
+                    Map<String, Object> userData = new HashMap<>();
+                    User subscriber = sub.getSubscriber();
+                    userData.put("id", subscriber.getId());
+                    userData.put("username", subscriber.getUsername());
+                    userData.put("firstName", subscriber.getFirstName());
+                    userData.put("lastName", subscriber.getLastName());
+                    userData.put("subscribedAt", sub.getSubscribedAt().toString());
+                    return userData;
+                })
+                .collect(Collectors.toList());
+
+            response.put("success", true);
+            response.put("count", subscriptions.size());
+            response.put("users", users);
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", e.getMessage());

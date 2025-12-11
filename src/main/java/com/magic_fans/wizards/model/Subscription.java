@@ -4,17 +4,19 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "subscriptions", uniqueConstraints = @UniqueConstraint(columnNames = {"regular_user_id", "wizard_id"}))
+@Table(name = "subscriptions",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"subscriber_id", "wizard_id"}))
 public class Subscription {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "regular_user_id", nullable = false)
-    private User regularUser;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "subscriber_id", nullable = false)
+    private User subscriber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "wizard_id", nullable = false)
     private User wizard;
 
@@ -22,10 +24,11 @@ public class Subscription {
     private LocalDateTime subscribedAt;
 
     public Subscription() {
+        this.subscribedAt = LocalDateTime.now();
     }
 
-    public Subscription(User regularUser, User wizard) {
-        this.regularUser = regularUser;
+    public Subscription(User subscriber, User wizard) {
+        this.subscriber = subscriber;
         this.wizard = wizard;
         this.subscribedAt = LocalDateTime.now();
     }
@@ -38,12 +41,12 @@ public class Subscription {
         this.id = id;
     }
 
-    public User getRegularUser() {
-        return regularUser;
+    public User getSubscriber() {
+        return subscriber;
     }
 
-    public void setRegularUser(User regularUser) {
-        this.regularUser = regularUser;
+    public void setSubscriber(User subscriber) {
+        this.subscriber = subscriber;
     }
 
     public User getWizard() {
@@ -60,5 +63,12 @@ public class Subscription {
 
     public void setSubscribedAt(LocalDateTime subscribedAt) {
         this.subscribedAt = subscribedAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (subscribedAt == null) {
+            subscribedAt = LocalDateTime.now();
+        }
     }
 }

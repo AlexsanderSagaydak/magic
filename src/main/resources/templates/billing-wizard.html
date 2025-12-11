@@ -155,21 +155,95 @@
     function loadStatUsers(type) {
         const usersList = document.getElementById('statUsersList');
 
-        // Placeholder - this will be replaced with actual data loading
-        usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
+        // Show loading state
+        usersList.innerHTML = '<p class="text-gray-400 text-sm">Загрузка...</p>';
 
-        // Example of how the user list will look (commented out for now):
-        /*
-        usersList.innerHTML = `
-            <div class="flex items-center gap-3 p-3 bg-dark-secondary rounded hover:bg-dark-tertiary transition">
-                <img src="/images/avatar-placeholder.png" class="w-10 h-10 rounded-full" alt="User">
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-200">Username</p>
-                    <p class="text-xs text-gray-400">2 hours ago</p>
-                </div>
-            </div>
-        `;
-        */
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (type === 'favorites') {
+            fetch('/billing/statistics/favorites', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.users && result.users.length > 0) {
+                    usersList.innerHTML = result.users.map(user => `
+                        <div class="flex items-center gap-3 p-3 bg-dark-secondary rounded hover:bg-dark-tertiary transition">
+                            <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold">
+                                ${user.firstName ? user.firstName.charAt(0) : user.username.charAt(0)}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-200">${user.firstName || ''} ${user.lastName || ''} (@${user.username})</p>
+                                <p class="text-xs text-gray-400">${formatDate(user.addedAt)}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                usersList.innerHTML = '<p class="text-red-400 text-sm">Ошибка загрузки данных</p>';
+            });
+        } else if (type === 'subscribers') {
+            fetch('/billing/statistics/subscribers', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.users && result.users.length > 0) {
+                    usersList.innerHTML = result.users.map(user => `
+                        <div class="flex items-center gap-3 p-3 bg-dark-secondary rounded hover:bg-dark-tertiary transition">
+                            <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold">
+                                ${user.firstName ? user.firstName.charAt(0) : user.username.charAt(0)}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-200">${user.firstName || ''} ${user.lastName || ''} (@${user.username})</p>
+                                <p class="text-xs text-gray-400">${formatDate(user.subscribedAt)}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                usersList.innerHTML = '<p class="text-red-400 text-sm">Ошибка загрузки данных</p>';
+            });
+        } else {
+            // Placeholder for other statistics types
+            usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 60) {
+            return diffMins === 1 ? '1 минуту назад' : `${diffMins} минут назад`;
+        } else if (diffHours < 24) {
+            return diffHours === 1 ? '1 час назад' : `${diffHours} часов назад`;
+        } else if (diffDays < 7) {
+            return diffDays === 1 ? '1 день назад' : `${diffDays} дней назад`;
+        } else {
+            return date.toLocaleDateString('ru-RU');
+        }
     }
 
     // Tab switching functionality

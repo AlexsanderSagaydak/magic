@@ -157,7 +157,7 @@
             <div class="flex flex-col items-center">
                 <button onclick="toggleStatSection('favorites')"
                         class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
-                    <span class="text-3xl font-bold text-yellow-400">0</span>
+                    <span class="text-3xl font-bold text-yellow-400" th:text="${favoritesCount != null ? favoritesCount : 0}">0</span>
                     <span class="text-xs text-gray-300 mt-1">Избранное</span>
                 </button>
             </div>
@@ -166,7 +166,7 @@
             <div class="flex flex-col items-center">
                 <button onclick="toggleStatSection('subscribers')"
                         class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
-                    <span class="text-3xl font-bold text-blue-400">0</span>
+                    <span class="text-3xl font-bold text-blue-400" th:text="${subscribersCount != null ? subscribersCount : 0}">0</span>
                     <span class="text-xs text-gray-300 mt-1">Подписчики</span>
                 </button>
             </div>
