@@ -3,12 +3,136 @@
 
 <!-- SERVICE & PRICE TAB -->
 <div th:fragment="servicePrice">
-    <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-8">
-        <h2 class="text-2xl font-bold mb-6">Service & Price</h2>
+    <!-- BASIC SERVICE SECTION -->
+    <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-8 mb-6">
+        <h2 class="text-2xl font-bold mb-6">Basic Service</h2>
 
-        <div class="space-y-6">
-            <!-- Service pricing will be added here -->
-            <p class="text-gray-400">Configure your services and pricing...</p>
+        <div class="space-y-4">
+            <!-- Количество бесплатних консультаций -->
+            <div class="flex items-center gap-4">
+                <label class="text-sm text-gray-300 flex-1">Количество бесплатних консультаций</label>
+                <input type="number"
+                       class="w-32 bg-dark border border-dark-tertiary rounded px-3 py-2 text-sm"
+                       value="0"
+                       min="0"
+                       step="1">
+            </div>
+
+            <!-- Консультация онлайн -->
+            <div class="flex items-center gap-4">
+                <label class="text-sm text-gray-300 flex-1">Консультация онлайн за 1 час</label>
+                <span class="text-sm text-gray-400">Price:</span>
+                <input type="number"
+                       class="w-32 bg-dark border border-dark-tertiary rounded px-3 py-2 text-sm"
+                       placeholder="0.00"
+                       min="0"
+                       step="0.01">
+            </div>
+
+            <!-- Разблокировка приватного чата -->
+            <div class="flex items-center gap-4">
+                <label class="text-sm text-gray-300 flex-1 flex items-center gap-2">
+                    Разблокировка приватного чата
+                    <span class="relative group cursor-help">
+                        <svg class="w-4 h-4 text-gray-400 hover:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="invisible group-hover:visible absolute left-6 top-0 w-64 bg-dark-tertiary text-gray-200 text-xs rounded py-2 px-3 z-10 border border-gray-600">
+                            Ви даете возможность писать вам на прямую в чат.
+                        </span>
+                    </span>
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-300">
+                    <input type="checkbox"
+                           id="chatFreeCheckbox"
+                           class="w-4 h-4 rounded"
+                           checked
+                           onchange="toggleChatPrice()">
+                    Бесплатно
+                </label>
+                <span id="chatPriceLabel" class="text-sm text-gray-400 hidden">Price:</span>
+                <input type="number"
+                       id="chatPriceInput"
+                       class="w-32 bg-dark border border-dark-tertiary rounded px-3 py-2 text-sm hidden"
+                       placeholder="0.00"
+                       min="0"
+                       step="0.01">
+            </div>
+
+            <!-- Просмотр постов в ленте -->
+            <div class="flex items-center gap-4">
+                <label class="text-sm text-gray-300 flex-1 flex items-center gap-2">
+                    Просмотр постов в ленте
+                    <span class="relative group cursor-help">
+                        <svg class="w-4 h-4 text-gray-400 hover:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="invisible group-hover:visible absolute left-6 top-0 w-64 bg-dark-tertiary text-gray-200 text-xs rounded py-2 px-3 z-10 border border-gray-600">
+                            если ви создаете контент и желаете брать плату за доступ к неу в ленте
+                        </span>
+                    </span>
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-300">
+                    <input type="checkbox"
+                           id="feedFreeCheckbox"
+                           class="w-4 h-4 rounded"
+                           checked
+                           onchange="toggleFeedPrice()">
+                    Бесплатно
+                </label>
+                <span id="feedPriceLabel" class="text-sm text-gray-400 hidden">Price:</span>
+                <input type="number"
+                       id="feedPriceInput"
+                       class="w-32 bg-dark border border-dark-tertiary rounded px-3 py-2 text-sm hidden"
+                       placeholder="0.00"
+                       min="0"
+                       step="0.01">
+            </div>
+        </div>
+    </div>
+
+    <!-- ADDITIONAL SERVICES SECTION -->
+    <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-2">Service & Price</h2>
+        <p class="text-sm text-gray-400 mb-6">Besides basic services you may add up to 10 additional custom services</p>
+
+        <div class="space-y-3">
+            <!-- Services List -->
+            <div id="servicesList">
+                <!-- Existing services will be loaded here -->
+                <div th:each="service : ${services}" class="service-row flex items-center gap-3 py-2">
+                    <input type="text"
+                           th:value="${service.serviceName}"
+                           class="flex-1 bg-dark border border-dark-tertiary rounded px-3 py-2 text-sm"
+                           placeholder="Service name"
+                           disabled>
+                    <span class="text-sm text-gray-400">Price:</span>
+                    <input type="number"
+                           th:value="${service.price}"
+                           class="w-24 bg-dark border border-dark-tertiary rounded px-3 py-2 text-sm"
+                           placeholder="0.00"
+                           disabled>
+                    <button onclick="editService(this)"
+                            class="px-4 py-2 bg-dark-tertiary hover:bg-dark text-sm rounded transition">
+                        Edit
+                    </button>
+                    <button onclick="saveService(this)"
+                            class="px-4 py-2 bg-dark-tertiary hover:bg-dark text-sm rounded transition hidden">
+                        Save
+                    </button>
+                    <button class="delete-btn px-4 py-2 bg-dark-tertiary hover:bg-red-900 text-sm rounded transition"
+                            th:data-service-id="${service.id}">
+                        Delete
+                    </button>
+                    <input type="hidden" th:value="${service.id}" class="service-id">
+                </div>
+            </div>
+
+            <!-- Add New Service Button -->
+            <button onclick="addServiceRow()"
+                    class="w-full px-4 py-3 bg-accent hover:bg-blue-600 text-sm rounded transition mt-4">
+                + Add Service
+            </button>
         </div>
     </div>
 </div>
@@ -18,9 +142,63 @@
     <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-8">
         <h2 class="text-2xl font-bold mb-6">Statistics</h2>
 
-        <div class="space-y-6">
-            <!-- Statistics content will be added here -->
-            <p class="text-gray-400">View your earnings statistics...</p>
+        <!-- Statistics Circles -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <!-- Лайки -->
+            <div class="flex flex-col items-center">
+                <button onclick="toggleStatSection('likes')"
+                        class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
+                    <span class="text-3xl font-bold text-pink-400">0</span>
+                    <span class="text-xs text-gray-300 mt-1">Лайки</span>
+                </button>
+            </div>
+
+            <!-- Избранное -->
+            <div class="flex flex-col items-center">
+                <button onclick="toggleStatSection('favorites')"
+                        class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
+                    <span class="text-3xl font-bold text-yellow-400">0</span>
+                    <span class="text-xs text-gray-300 mt-1">Избранное</span>
+                </button>
+            </div>
+
+            <!-- Подписчики -->
+            <div class="flex flex-col items-center">
+                <button onclick="toggleStatSection('subscribers')"
+                        class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
+                    <span class="text-3xl font-bold text-blue-400">0</span>
+                    <span class="text-xs text-gray-300 mt-1">Подписчики</span>
+                </button>
+            </div>
+
+            <!-- Просмотры -->
+            <div class="flex flex-col items-center">
+                <button onclick="toggleStatSection('views')"
+                        class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
+                    <span class="text-3xl font-bold text-green-400">0</span>
+                    <span class="text-xs text-gray-300 mt-1">Просмотры</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- User Lists Section -->
+        <div id="statSection" class="hidden">
+            <div class="bg-dark border border-dark-tertiary rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 id="statSectionTitle" class="text-lg font-semibold text-gray-200"></h3>
+                    <button onclick="closeStatSection()" class="text-gray-400 hover:text-gray-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Users List -->
+                <div id="statUsersList" class="space-y-2 max-h-96 overflow-y-auto">
+                    <!-- Users will be loaded here -->
+                    <p class="text-gray-400 text-sm">Нет данных для отображения</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
