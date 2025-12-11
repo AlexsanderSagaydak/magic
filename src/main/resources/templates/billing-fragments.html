@@ -148,7 +148,7 @@
             <div class="flex flex-col items-center">
                 <button onclick="toggleStatSection('likes')"
                         class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
-                    <span class="text-3xl font-bold text-pink-400">0</span>
+                    <span class="text-3xl font-bold text-pink-400" th:text="${likesCount != null ? likesCount : 0}">0</span>
                     <span class="text-xs text-gray-300 mt-1">Лайки</span>
                 </button>
             </div>
@@ -175,7 +175,7 @@
             <div class="flex flex-col items-center">
                 <button onclick="toggleStatSection('views')"
                         class="stat-circle w-32 h-32 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex flex-col items-center justify-center hover:scale-105 transition-transform shadow-lg border border-gray-500">
-                    <span class="text-3xl font-bold text-green-400">0</span>
+                    <span class="text-3xl font-bold text-green-400" th:text="${viewsCount != null ? viewsCount : 0}">0</span>
                     <span class="text-xs text-gray-300 mt-1">Просмотры</span>
                 </button>
             </div>

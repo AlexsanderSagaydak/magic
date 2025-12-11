@@ -221,8 +221,67 @@
                 console.error('Error:', error);
                 usersList.innerHTML = '<p class="text-red-400 text-sm">Ошибка загрузки данных</p>';
             });
+        } else if (type === 'views') {
+            fetch('/billing/statistics/views', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.users && result.users.length > 0) {
+                    usersList.innerHTML = result.users.map(user => `
+                        <div class="flex items-center gap-3 p-3 bg-dark-secondary rounded hover:bg-dark-tertiary transition">
+                            <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold">
+                                ${user.firstName ? user.firstName.charAt(0) : user.username.charAt(0)}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-200">${user.firstName || ''} ${user.lastName || ''} (@${user.username})</p>
+                                <p class="text-xs text-gray-400">${formatDate(user.viewedAt)}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                usersList.innerHTML = '<p class="text-red-400 text-sm">Ошибка загрузки данных</p>';
+            });
+        } else if (type === 'likes') {
+            fetch('/billing/statistics/likes', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.users && result.users.length > 0) {
+                    usersList.innerHTML = result.users.map(user => `
+                        <div class="flex items-center gap-3 p-3 bg-dark-secondary rounded hover:bg-dark-tertiary transition">
+                            <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold">
+                                ${user.firstName ? user.firstName.charAt(0) : user.username.charAt(0)}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-200">${user.firstName || ''} ${user.lastName || ''} (@${user.username})</p>
+                                <p class="text-xs text-gray-400">${formatDate(user.likedAt)} • Post #${user.postId}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                usersList.innerHTML = '<p class="text-red-400 text-sm">Ошибка загрузки данных</p>';
+            });
         } else {
-            // Placeholder for other statistics types
             usersList.innerHTML = '<p class="text-gray-400 text-sm">Нет данных для отображения</p>';
         }
     }

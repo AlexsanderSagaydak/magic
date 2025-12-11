@@ -6,6 +6,10 @@ import com.magic_fans.wizards.model.RegularUserProfile;
 import com.magic_fans.wizards.model.Subscription;
 import com.magic_fans.wizards.repository.SubscriptionRepository;
 import com.magic_fans.wizards.service.UserService;
+import com.magic_fans.wizards.service.ProfileViewService;
+import com.magic_fans.wizards.service.WizardSkillsService;
+import com.magic_fans.wizards.service.PostService;
+import com.magic_fans.wizards.service.PostLikeService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +51,18 @@ class UserControllerTest {
 
     @Mock
     private SubscriptionRepository subscriptionRepository;
+
+    @Mock
+    private ProfileViewService profileViewService;
+
+    @Mock
+    private WizardSkillsService wizardSkillsService;
+
+    @Mock
+    private PostService postService;
+
+    @Mock
+    private PostLikeService postLikeService;
 
     @Mock
     private Model model;

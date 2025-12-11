@@ -1,10 +1,14 @@
 package com.magic_fans.wizards.controller;
 
 import com.magic_fans.wizards.model.Favorite;
+import com.magic_fans.wizards.model.PostLike;
+import com.magic_fans.wizards.model.ProfileView;
 import com.magic_fans.wizards.model.Subscription;
 import com.magic_fans.wizards.model.User;
 import com.magic_fans.wizards.model.WizardService;
 import com.magic_fans.wizards.service.FavoriteService;
+import com.magic_fans.wizards.service.PostLikeService;
+import com.magic_fans.wizards.service.ProfileViewService;
 import com.magic_fans.wizards.service.SubscriptionService;
 import com.magic_fans.wizards.service.UserService;
 import com.magic_fans.wizards.service.WizardServiceService;
@@ -37,6 +41,12 @@ public class BillingController {
     @Autowired
     private SubscriptionService subscriptionService;
 
+    @Autowired
+    private ProfileViewService profileViewService;
+
+    @Autowired
+    private PostLikeService postLikeService;
+
     @GetMapping("")
     public String billing(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -63,8 +73,12 @@ public class BillingController {
             // Load statistics
             long favoritesCount = favoriteService.getWizardFavoritesCount(user.getId());
             long subscribersCount = subscriptionService.getWizardSubscribersCount(user.getId());
+            long viewsCount = profileViewService.getWizardViewsCount(user.getId());
+            long likesCount = postLikeService.getTotalLikesByAuthor(user.getId());
             model.addAttribute("favoritesCount", favoritesCount);
             model.addAttribute("subscribersCount", subscribersCount);
+            model.addAttribute("viewsCount", viewsCount);
+            model.addAttribute("likesCount", likesCount);
 
             return "billing-wizard";
         } else {
@@ -244,6 +258,111 @@ public class BillingController {
 
             response.put("success", true);
             response.put("count", subscriptions.size());
+            response.put("users", users);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics/views")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getViewsStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+                response.put("success", false);
+                response.put("message", "Not authenticated");
+                return ResponseEntity.ok(response);
+            }
+
+            String username = auth.getName();
+            var userOpt = userService.getUserByUsername(username);
+
+            if (userOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "User not found");
+                return ResponseEntity.ok(response);
+            }
+
+            User user = userOpt.get();
+
+            // Get list of viewers
+            List<ProfileView> views = profileViewService.getWizardViewers(user.getId());
+
+            // Map to simple user data
+            List<Map<String, Object>> users = views.stream()
+                .map(view -> {
+                    Map<String, Object> userData = new HashMap<>();
+                    User viewer = view.getViewer();
+                    userData.put("id", viewer.getId());
+                    userData.put("username", viewer.getUsername());
+                    userData.put("firstName", viewer.getFirstName());
+                    userData.put("lastName", viewer.getLastName());
+                    userData.put("viewedAt", view.getViewedAt().toString());
+                    return userData;
+                })
+                .collect(Collectors.toList());
+
+            response.put("success", true);
+            response.put("count", views.size());
+            response.put("users", users);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics/likes")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getLikesStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+                response.put("success", false);
+                response.put("message", "Not authenticated");
+                return ResponseEntity.ok(response);
+            }
+
+            String username = auth.getName();
+            var userOpt = userService.getUserByUsername(username);
+
+            if (userOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "User not found");
+                return ResponseEntity.ok(response);
+            }
+
+            User user = userOpt.get();
+
+            // Get all likes for this wizard's posts
+            List<PostLike> likes = postLikeService.getAllLikesByAuthor(user.getId());
+
+            // Map to simple user data
+            List<Map<String, Object>> users = likes.stream()
+                .map(like -> {
+                    Map<String, Object> userData = new HashMap<>();
+                    User likeUser = like.getUser();
+                    userData.put("id", likeUser.getId());
+                    userData.put("username", likeUser.getUsername());
+                    userData.put("firstName", likeUser.getFirstName());
+                    userData.put("lastName", likeUser.getLastName());
+                    userData.put("likedAt", like.getLikedAt().toString());
+                    userData.put("postId", like.getPost().getId());
+                    return userData;
+                })
+                .collect(Collectors.toList());
+
+            response.put("success", true);
+            response.put("count", likes.size());
             response.put("users", users);
         } catch (Exception e) {
             response.put("success", false);

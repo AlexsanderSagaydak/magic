@@ -6,6 +6,9 @@ import com.magic_fans.wizards.model.WizardProfile;
 import com.magic_fans.wizards.model.Subscription;
 import com.magic_fans.wizards.service.UserService;
 import com.magic_fans.wizards.service.WizardSkillsService;
+import com.magic_fans.wizards.service.ProfileViewService;
+import com.magic_fans.wizards.service.PostService;
+import com.magic_fans.wizards.service.PostLikeService;
 import com.magic_fans.wizards.repository.SubscriptionRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -37,6 +43,15 @@ public class UserController {
 
     @Autowired
     private WizardSkillsService wizardSkillsService;
+
+    @Autowired
+    private ProfileViewService profileViewService;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private PostLikeService postLikeService;
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -151,6 +166,11 @@ public class UserController {
                                 wizardSkillsService.getAllSkillsForWizard(viewedUser.getWizardProfile().getId()));
                         }
 
+                        // Add posts for wizards
+                        if ("wizard".equals(viewedUser.getRole())) {
+                            model.addAttribute("posts", postService.getPostsByAuthor(viewedUser.getId()));
+                        }
+
                         return "my-profile";
                     }
 
@@ -168,12 +188,28 @@ public class UserController {
                     boolean isSubscribed = false;
                     if ("regular".equals(currentUser.getRole()) && "wizard".equals(viewedUser.getRole())) {
                         isSubscribed = subscriptionRepository.existsByRegularUserIdAndWizardId(currentUser.getId(), viewedUser.getId());
+
+                        // Record profile view
+                        profileViewService.recordView(currentUser, viewedUser);
                     }
 
                     // Wizard viewing regular is allowed (but we don't show this in practice)
                     model.addAttribute("user", viewedUser);
                     model.addAttribute("isOwnProfile", false);
                     model.addAttribute("isSubscribed", isSubscribed);
+
+                    // Add posts for wizards
+                    if ("wizard".equals(viewedUser.getRole())) {
+                        model.addAttribute("posts", postService.getPostsByAuthor(viewedUser.getId()));
+
+                        // Check which posts current user has liked
+                        var posts = postService.getPostsByAuthor(viewedUser.getId());
+                        Map<Long, Boolean> likedPosts = new HashMap<>();
+                        for (var post : posts) {
+                            likedPosts.put(post.getId(), postLikeService.isLiked(post.getId(), currentUser.getId()));
+                        }
+                        model.addAttribute("likedPosts", likedPosts);
+                    }
 
                     return "profile";
                 })

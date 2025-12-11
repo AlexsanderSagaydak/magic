@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -151,6 +153,38 @@
 
                 </div>
 
+                <!-- POSTS SECTION -->
+                <div th:if="${posts != null && !posts.isEmpty()}" class="mt-10">
+                    <h3 class="text-xl font-bold mb-4">Posts</h3>
+
+                    <div class="space-y-4">
+                        <div th:each="post : ${posts}" th:data-post-id="${post.id}"
+                             class="post-item bg-dark-secondary p-4 rounded-xl border border-dark-tertiary">
+                            <div class="flex items-start gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    <span th:text="${user.firstName != null ? user.firstName.substring(0,1) : user.username.substring(0,1)}"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-sm" th:text="${user.firstName + ' ' + user.lastName}"></p>
+                                    <p class="text-xs text-gray-400" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm')}"></p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-200 mb-3 ml-13" th:text="${post.content}"></p>
+                            <div class="flex items-center gap-4 text-sm ml-13">
+                                <button th:onclick="'toggleLike(' + ${post.id} + ')'"
+                                        th:data-post-id="${post.id}"
+                                        th:classappend="${likedPosts != null && likedPosts[post.id] ? 'text-red-500' : 'text-gray-400'}"
+                                        class="like-btn flex items-center gap-1 hover:text-red-500 transition">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="likes-count" th:text="${post.likesCount}">0</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ACTION BUTTONS -->
                 <div class="mt-10 pt-8 border-t border-dark-tertiary flex gap-4">
                     <!-- Subscribe Button (for Regular users viewing Wizard) -->
@@ -185,6 +219,49 @@
 
     </div>
 </main>
+
+<script>
+    function toggleLike(postId) {
+        const button = document.querySelector(`button[data-post-id="${postId}"]`);
+        const isLiked = button.classList.contains('text-red-500');
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        const url = isLiked ? `/posts/${postId}/like` : `/posts/${postId}/like`;
+        const method = isLiked ? 'DELETE' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Toggle like button color
+                if (isLiked) {
+                    button.classList.remove('text-red-500');
+                    button.classList.add('text-gray-400');
+                } else {
+                    button.classList.remove('text-gray-400');
+                    button.classList.add('text-red-500');
+                }
+
+                // Update likes count
+                const likesCountSpan = button.querySelector('.likes-count');
+                likesCountSpan.textContent = result.likesCount;
+            } else {
+                alert(result.message || 'Error toggling like');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error toggling like');
+        });
+    }
+</script>
 
 </body>
 </html>
