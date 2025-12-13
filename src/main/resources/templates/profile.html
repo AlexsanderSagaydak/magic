@@ -170,6 +170,13 @@
                                 </div>
                             </div>
                             <p class="text-sm text-gray-200 mb-3 ml-13" th:text="${post.content}"></p>
+                            <div th:if="${post.imageUrl != null and not #strings.isEmpty(post.imageUrl)}" class="mb-3 ml-13">
+                                <img th:src="${post.imageUrl}"
+                                     alt="Post image"
+                                     class="w-full max-w-2xl h-auto max-h-96 object-cover rounded-lg border border-dark-tertiary cursor-pointer hover:opacity-90 transition"
+                                     onclick="openImageModal(this.src)"
+                                     onerror="console.log('Image failed to load:', this.src)">
+                            </div>
                             <div class="flex items-center gap-4 text-sm ml-13">
                                 <button th:onclick="'toggleLike(' + ${post.id} + ')'"
                                         th:data-post-id="${post.id}"
@@ -261,7 +268,32 @@
             alert('Error toggling like');
         });
     }
+
+    // Image Modal Functions
+    function openImageModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = imageSrc;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
 </script>
+
+<!-- Image Modal -->
+<div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 items-center justify-center" onclick="closeImageModal()">
+    <div class="relative max-w-7xl max-h-screen p-4">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-bold z-10">
+            &times;
+        </button>
+        <img id="modalImage" src="" alt="Full size image" class="max-w-full max-h-screen object-contain rounded-lg">
+    </div>
+</div>
 
 </body>
 </html>

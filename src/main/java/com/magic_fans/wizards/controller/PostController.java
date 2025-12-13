@@ -66,7 +66,13 @@ public class PostController {
                 return ResponseEntity.ok(response);
             }
 
-            Post post = postService.createPost(user, content);
+            String imageUrl = payload.get("imageUrl");
+            Post post;
+            if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+                post = postService.createPost(user, content, imageUrl);
+            } else {
+                post = postService.createPost(user, content);
+            }
 
             response.put("success", true);
             response.put("postId", post.getId());
