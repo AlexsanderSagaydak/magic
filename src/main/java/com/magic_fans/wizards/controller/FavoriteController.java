@@ -99,8 +99,8 @@ public class FavoriteController {
         dto.setSpecialization(wizard.getSpecialization());
         dto.setAddedAt(favorite.getAddedAt());
 
-        // Generate avatar URL using DiceBear API
-        dto.setAvatarUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=" + wizard.getUsername());
+        // Use user's avatar or default
+        dto.setAvatarUrl(wizard.getAvatarUrl() != null ? wizard.getAvatarUrl() : "/images/default-avatar.svg");
 
         // Generate profile image URL using placeholder service
         String colorCode = String.format("%06X", wizard.getId() * 12345 & 0xFFFFFF);

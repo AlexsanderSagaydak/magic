@@ -303,12 +303,12 @@ public class ProfileFeedController {
         dto.setSpecialization(user.getSpecialization());
         dto.setAboutMe(user.getAboutMe());
 
-        // Use DiceBear API for dynamic avatars based on username
-        String seed = user.getUsername();
-        dto.setAvatarUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=" + seed);
+        // Use user's avatar or default
+        dto.setAvatarUrl(user.getAvatarUrl() != null ? user.getAvatarUrl() : "/images/default-avatar.svg");
 
         // Use gradient placeholder for profile cover image (via placeholder service)
         String colorCode = String.format("%06X", user.getId() * 12345 & 0xFFFFFF);
+        String seed = user.getUsername();
         dto.setProfileImageUrl("https://via.placeholder.com/400x300/" + colorCode + "/FFFFFF?text=" + seed);
         dto.setVideoUrl("/videos/profile-" + user.getId() + ".mp4");
 

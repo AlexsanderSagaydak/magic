@@ -8,6 +8,8 @@
     <title>My Profile</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -117,9 +119,20 @@
                 <!-- HEADER TOP: AVATAR -->
                 <div class="flex items-start gap-6 mb-8 pb-6 border-b border-dark-tertiary">
 
-                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent bg-dark-tertiary">
-                        <img th:src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${user.username}"
-                             class="w-full h-full object-cover">
+                    <div class="relative">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent bg-dark-tertiary">
+                            <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/images/default-avatar.svg'}"
+                                 id="profileAvatar"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='/images/default-avatar.svg'">
+                        </div>
+                        <button onclick="openAvatarUpload()"
+                                class="absolute bottom-0 right-0 bg-accent hover:bg-blue-600 p-2 rounded-full border-2 border-dark transition">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </button>
                     </div>
 
                     <div class="flex-1 pt-2">
@@ -1315,6 +1328,159 @@
             alert('Error deleting post');
         });
     }
+
+    // ========== AVATAR UPLOAD FUNCTIONALITY ==========
+    let cropper = null;
+    let selectedAvatarFile = null;
+
+    function openAvatarUpload() {
+        document.getElementById('avatarModal').classList.remove('hidden');
+    }
+
+    function closeAvatarUpload() {
+        document.getElementById('avatarModal').classList.add('hidden');
+        resetAvatarCrop();
+    }
+
+    function handleAvatarSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            alert('Invalid file format. Please use JPEG, PNG, or WebP');
+            return;
+        }
+
+        // Validate file size (5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('File is too large. Maximum size is 5MB');
+            return;
+        }
+
+        selectedAvatarFile = file;
+
+        // Show crop area
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.getElementById('avatarCropImage');
+            img.src = e.target.result;
+
+            document.getElementById('avatarUploadArea').classList.add('hidden');
+            document.getElementById('avatarCropArea').classList.remove('hidden');
+
+            // Initialize Cropper.js
+            if (cropper) {
+                cropper.destroy();
+            }
+            cropper = new Cropper(img, {
+                aspectRatio: 1, // Square
+                viewMode: 2,
+                dragMode: 'move',
+                autoCropArea: 1,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function rotateAvatar(degree) {
+        if (cropper) {
+            cropper.rotate(degree);
+        }
+    }
+
+    function resetAvatarCrop() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        document.getElementById('avatarInput').value = '';
+        document.getElementById('avatarUploadArea').classList.remove('hidden');
+        document.getElementById('avatarCropArea').classList.add('hidden');
+        selectedAvatarFile = null;
+    }
+
+    function cancelAvatarUpload() {
+        resetAvatarCrop();
+        closeAvatarUpload();
+    }
+
+    async function uploadAvatar() {
+        if (!cropper) return;
+
+        // Get cropped canvas (400x400 for avatar)
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+        });
+
+        // Convert to blob
+        canvas.toBlob(async (blob) => {
+            const formData = new FormData();
+            formData.append('avatar', blob, 'avatar.jpg');
+
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            try {
+                const response = await fetch('/api/users/avatar', {
+                    method: 'POST',
+                    headers: {
+                        [header]: token
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update avatar image
+                    document.getElementById('profileAvatar').src = result.avatarUrl + '?t=' + Date.now();
+                    showToast('Avatar updated successfully!', 'success');
+                    closeAvatarUpload();
+                } else {
+                    alert(result.message || 'Failed to upload avatar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to upload avatar');
+            }
+        }, 'image/jpeg', 0.9);
+    }
+
+    // Drag & drop support
+    const dropZone = document.getElementById('avatarDropZone');
+    if (dropZone) {
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-accent');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-accent');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-accent');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('avatarInput').files = files;
+                handleAvatarSelect({ target: { files: files } });
+            }
+        });
+    }
 </script>
 
 <!-- Image Modal -->
@@ -1324,6 +1490,65 @@
             &times;
         </button>
         <img id="modalImage" src="" alt="Full size image" class="max-w-full max-h-screen object-contain rounded-lg">
+    </div>
+</div>
+
+<!-- Avatar Upload Modal -->
+<div id="avatarModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+    <div class="bg-dark-secondary rounded-xl max-w-2xl w-full mx-4 p-6 border border-dark-tertiary" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold">Upload Avatar</h3>
+            <button onclick="closeAvatarUpload()" class="text-gray-400 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Upload Area -->
+        <div id="avatarUploadArea" class="mb-4">
+            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleAvatarSelect(event)">
+            <div id="avatarDropZone" onclick="document.getElementById('avatarInput').click()"
+                 class="border-2 border-dashed border-dark-tertiary rounded-lg p-8 text-center cursor-pointer hover:border-accent transition">
+                <svg class="w-16 h-16 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <p class="text-gray-300 mb-2">Click to upload or drag & drop</p>
+                <p class="text-gray-500 text-sm">JPEG, PNG, WebP • Max 5MB • Square image recommended</p>
+            </div>
+        </div>
+
+        <!-- Crop Area (hidden by default) -->
+        <div id="avatarCropArea" class="hidden">
+            <div class="mb-4" style="max-height: 400px;">
+                <img id="avatarCropImage" src="" alt="Crop" style="max-width: 100%;">
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="rotateAvatar(-90)" class="px-3 py-2 bg-dark-tertiary hover:bg-dark rounded transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                    </svg>
+                </button>
+                <button onclick="rotateAvatar(90)" class="px-3 py-2 bg-dark-tertiary hover:bg-dark rounded transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/>
+                    </svg>
+                </button>
+                <button onclick="resetAvatarCrop()" class="px-4 py-2 bg-dark-tertiary hover:bg-dark rounded transition">
+                    Reset
+                </button>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cancelAvatarUpload()" class="flex-1 px-4 py-2 bg-dark-tertiary hover:bg-dark rounded transition">
+                    Cancel
+                </button>
+                <button onclick="uploadAvatar()" class="flex-1 px-4 py-2 bg-accent hover:bg-blue-600 rounded transition">
+                    Upload Avatar
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 

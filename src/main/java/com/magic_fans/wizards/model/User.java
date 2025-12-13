@@ -36,6 +36,9 @@ public class User implements UserDetails {
     @Column(length = 500)
     private String aboutMe;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     @Column(nullable = false)
     private String role = "regular";
 
@@ -126,6 +129,14 @@ public class User implements UserDetails {
 
     public void setAboutMe(String aboutMe) {
         this.aboutMe = aboutMe;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getRole() {

@@ -46,8 +46,9 @@
 
                     <!-- AVATAR -->
                     <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent bg-dark-tertiary">
-                        <img th:src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${user.username}"
-                             class="w-full h-full object-cover">
+                        <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/images/default-avatar.svg'}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='/images/default-avatar.svg'">
                     </div>
 
                     <!-- USER INFO -->
