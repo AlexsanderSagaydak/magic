@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @Column(nullable = true)
     private String specialization;
 
-    @Column(length = 500)
+    @Column(length = 200)
     private String aboutMe;
 
     @Column(name = "avatar_url")

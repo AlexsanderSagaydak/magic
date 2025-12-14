@@ -219,7 +219,7 @@ public class UserController {
     @PostMapping("/profile/save")
     public String saveProfileDetails(@RequestParam(required = false) String firstName,
                                     @RequestParam(required = false) String lastName,
-                                    @RequestParam(required = true) String specialization,
+                                    @RequestParam(required = false) String specialization,
                                     @RequestParam(required = false) String aboutMe,
                                     @RequestParam(required = false) String birthDate,
                                     @RequestParam(required = false) String birthPlace,
@@ -259,7 +259,7 @@ public class UserController {
 
             // Update about me
             if (aboutMe != null) {
-                user.setAboutMe(aboutMe.length() > 500 ? aboutMe.substring(0, 500) : aboutMe);
+                user.setAboutMe(aboutMe.length() > 200 ? aboutMe.substring(0, 200) : aboutMe);
             }
 
             // Update role-specific profiles
@@ -386,6 +386,46 @@ public class UserController {
             e.printStackTrace();
             redirectAttributes.addAttribute("error", "An error occurred");
             return "redirect:/feed";
+        }
+    }
+
+    /**
+     * API endpoint to update user specialization
+     */
+    @PostMapping("/{userId}/specialization")
+    @ResponseBody
+    public Map<String, Object> updateSpecialization(@PathVariable Integer userId, @RequestBody Map<String, String> payload) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String specialization = payload.get("specialization");
+
+            if (specialization == null || specialization.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Specialization cannot be empty");
+                return response;
+            }
+
+            var userOpt = userService.getUserById(userId);
+            if (userOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "User not found");
+                return response;
+            }
+
+            User user = userOpt.get();
+            user.setSpecialization(specialization.trim());
+            userService.updateUser(user);
+
+            response.put("success", true);
+            response.put("message", "Specialization updated successfully");
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "Error updating specialization: " + e.getMessage());
+            return response;
         }
     }
 }

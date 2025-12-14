@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="#{success.page.title} + ' - ' + #{nav.title}">Registration Successful - Wizards</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -95,17 +97,17 @@
                         <h4 class="font-semibold text-gray-300" th:text="#{success.nextSteps}">What's Next?</h4>
                         <div class="space-y-2 text-left">
                             <!-- Step 1: Complete Profile -->
-                            <a href="/my-profile" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
+                            <div class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg">
                                 <span class="text-accent font-semibold">1</span>
                                 <span class="text-gray-400" th:text="#{success.step1}">Complete your profile with additional information</span>
-                            </a>
+                            </div>
 
                             <!-- Step 2: Choose Specialization (only for wizard role) -->
                             <div th:if="${userRole == 'wizard'}">
-                                <a href="/edit-specialization" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
+                                <div onclick="openSpecializationModal()" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
                                     <span class="text-accent font-semibold">2</span>
-                                    <span class="text-gray-400" th:text="#{success.step2}">Choose your magical specialization</span>
-                                </a>
+                                    <span class="text-gray-400">Укажите вашу специализацию</span>
+                                </div>
                             </div>
 
                             <!-- Step 3: Start Learning (numbering changes based on role) -->
@@ -167,5 +169,161 @@
             <p th:text="#{footer.copyright}">2024 Wizards. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Specialization Modal -->
+    <div id="specializationModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+        <div class="bg-dark-secondary rounded-xl max-w-xl w-full mx-4 p-8 border border-dark-tertiary" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold">Выберите специализацию</h3>
+                <button onclick="closeSpecializationModal()" class="text-gray-400 hover:text-white transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Dropdown -->
+                <div>
+                    <label class="text-gray-400 text-sm mb-2 block">Выберите из списка:</label>
+                    <select id="specializationDropdown" class="w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                        <option value="">-- Выберите специализацию --</option>
+                        <option value="Знахарь">Знахарь</option>
+                        <option value="Ведун/Ведунья">Ведун/Ведунья</option>
+                        <option value="Шептун">Шептун</option>
+                        <option value="Заговорщик">Заговорщик</option>
+                        <option value="Ворожея/Ворожей">Ворожея/Ворожей</option>
+                        <option value="Зорник/Зорница">Зорник/Зорница</option>
+                        <option value="Толкователь снов">Толкователь снов</option>
+                        <option value="Эзотерик">Эзотерик</option>
+                        <option value="Таролог">Таролог</option>
+                        <option value="Нумеролог">Нумеролог</option>
+                        <option value="Астролог">Астролог</option>
+                        <option value="Энергетический практик">Энергетический практик</option>
+                        <option value="Регрессолог">Регрессолог</option>
+                        <option value="Медиум">Медиум</option>
+                        <option value="Гипнолог-эзотерик">Гипнолог-эзотерик</option>
+                        <option value="Психоэнергет">Психоэнергет</option>
+                        <option value="Натуропат">Натуропат</option>
+                        <option value="Ароматерапевт">Ароматерапевт</option>
+                        <option value="Космоэнергет">Космоэнергет</option>
+                        <option value="Хиромант">Хиромант</option>
+                        <option value="Оракул-практик">Оракул-практик</option>
+                        <option value="Кофейный гадатель">Кофейный гадатель</option>
+                        <option value="Ониксомант / гадатель по камням">Ониксомант / гадатель по камням</option>
+                        <option value="Аура-ридер">Аура-ридер</option>
+                        <option value="Тета-хиллер">Тета-хиллер</option>
+                        <option value="Коуч-эзотерик">Коуч-эзотерик</option>
+                        <option value="Проводник намерений">Проводник намерений</option>
+                        <option value="Ирридолог/Диагностика по радужке глаза">Ирридолог/Диагностика по радужке глаза</option>
+                        <option value="Практик манифестаций">Практик манифестаций</option>
+                        <option value="МунРитуал">МунРитуал</option>
+                    </select>
+                </div>
+
+                <!-- Custom Input Checkbox -->
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="customSpecCheckbox" onchange="toggleCustomInput()" class="w-4 h-4 rounded border-gray-600 bg-dark-tertiary text-accent focus:ring-accent">
+                    <label for="customSpecCheckbox" class="text-gray-400 text-sm cursor-pointer">Не нашли себя?</label>
+                </div>
+
+                <!-- Custom Input (hidden by default) -->
+                <div id="customInputContainer" class="hidden">
+                    <label class="text-gray-400 text-sm mb-2 block">Укажите свою специализацию:</label>
+                    <input type="text" id="customSpecInput" maxlength="100" placeholder="Введите вашу специализацию..."
+                           class="w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                </div>
+
+                <!-- Info Text -->
+                <p class="text-xs text-gray-500 italic">
+                    Вы сможете детально рассказать о ваших практиках в разделе Мой Профиль в поле О Себе
+                </p>
+
+                <!-- Save Button -->
+                <button onclick="saveSpecialization()" class="w-full py-3 bg-accent hover:bg-blue-600 text-white font-semibold rounded-lg transition">
+                    Сохранить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSpecializationModal() {
+            document.getElementById('specializationModal').classList.remove('hidden');
+        }
+
+        function closeSpecializationModal() {
+            document.getElementById('specializationModal').classList.add('hidden');
+        }
+
+        function toggleCustomInput() {
+            const checkbox = document.getElementById('customSpecCheckbox');
+            const customContainer = document.getElementById('customInputContainer');
+            const dropdown = document.getElementById('specializationDropdown');
+
+            if (checkbox.checked) {
+                customContainer.classList.remove('hidden');
+                dropdown.value = '';
+                dropdown.disabled = true;
+            } else {
+                customContainer.classList.add('hidden');
+                dropdown.disabled = false;
+            }
+        }
+
+        async function saveSpecialization() {
+            const dropdown = document.getElementById('specializationDropdown');
+            const customCheckbox = document.getElementById('customSpecCheckbox');
+            const customInput = document.getElementById('customSpecInput');
+
+            let specialization = '';
+
+            if (customCheckbox.checked) {
+                specialization = customInput.value.trim();
+                if (!specialization) {
+                    alert('Пожалуйста, укажите вашу специализацию');
+                    return;
+                }
+            } else {
+                specialization = dropdown.value;
+                if (!specialization) {
+                    alert('Пожалуйста, выберите специализацию из списка');
+                    return;
+                }
+            }
+
+            try {
+                const userId = [[${userId}]];
+                const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+                const response = await fetch(`/users/${userId}/specialization`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [header]: token
+                    },
+                    body: JSON.stringify({ specialization: specialization })
+                });
+
+                if (response.ok) {
+                    alert('Специализация сохранена!');
+                    closeSpecializationModal();
+                } else {
+                    alert('Ошибка при сохранении специализации');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка при сохранении специализации');
+            }
+        }
+
+        // Close modal on outside click
+        document.getElementById('specializationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSpecializationModal();
+            }
+        });
+    </script>
 </body>
 </html>
