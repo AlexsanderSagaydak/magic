@@ -174,6 +174,13 @@
                     </div>
 
                     <div class="flex-1 pt-2">
+                        <!-- ACCOUNT STATUS -->
+                        <div class="mb-3 flex items-center gap-2">
+                            <span class="text-gray-400 text-sm">Account Status:</span>
+                            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                            <span class="text-gray-100 text-sm">Active</span>
+                        </div>
+
                         <h2 class="text-3xl font-bold mb-2">
                             <span th:text="${user.firstName}"></span>
                             <span th:text="${user.lastName}"></span>
@@ -183,11 +190,17 @@
                             @<span th:text="${user.username}"></span>
                         </p>
 
-                        <!-- ROLE BADGE -->
-                        <div class="flex gap-2 mb-4">
-                            <span class="inline-block px-3 py-1 bg-blue-900/30 border border-blue-500 rounded-full text-blue-300 text-sm font-medium">Regular User</span>
+                        <!-- SPECIALIZATION -->
+                        <div class="flex items-center gap-2 view-field">
+                            <span class="text-gray-400 text-sm">Специалист:</span>
+                            <span class="text-gray-100 text-sm" th:text="${user.specialization != null && !user.specialization.isEmpty() ? user.specialization : 'Не указано'}"></span>
                         </div>
-
+                        <div class="edit-field">
+                            <label class="text-gray-400 text-sm mb-1 block">Специалист</label>
+                            <input type="text" name="specialization" th:value="${user.specialization}"
+                                   class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none"
+                                   placeholder="Укажите вашу специализацию">
+                        </div>
                     </div>
 
                     <!-- EDIT BUTTON (bottom right corner) -->
@@ -217,86 +230,93 @@
                 <!-- ============================= -->
                 <!-- FORM START -->
                 <!-- ============================= -->
-                <form id="profileFormRegular" method="post" th:action="@{/users/profile/save}">
+                <form id="profileFormRegular" method="post" th:action="@{/users/profile/save}" class="space-y-10">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
+                    <!-- О СЕБЕ -->
+                    <div class="mb-8">
+                        <h3 class="text-sm mb-3 text-gray-400">О себе</h3>
+                        <hr class="border-dark-tertiary mb-3">
+
+                        <div class="view-field">
+                            <p class="text-gray-100" th:text="${user.aboutMe != null && !user.aboutMe.isEmpty() ? user.aboutMe : 'Не указано'}"></p>
+                        </div>
+
+                        <div class="edit-field">
+                            <textarea name="aboutMe" id="aboutMeFieldRegular" maxlength="200"
+                                      th:text="${user.aboutMe}"
+                                      class="w-full px-4 py-3 bg-dark-tertiary border border-dark-tertiary rounded-lg text-gray-100 focus:border-accent focus:ring-accent resize-none"
+                                      rows="3"
+                                      placeholder="Расскажите немного о себе..."></textarea>
+                            <div class="flex justify-end mt-1">
+                                <span id="charCountRegular" class="text-xs text-gray-500">0 / 200</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- PROFILE INFORMATION -->
-                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Profile Information
-                    </h3>
+                    <div class="mb-8">
+                        <h3 class="text-sm mb-3 text-gray-400">Profile Information</h3>
+                        <hr class="border-dark-tertiary mb-3">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- First Name -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">First Name</p>
-                            <p class="text-gray-100 font-medium view-field" th:text="${user.firstName}"></p>
-                            <input type="text" name="firstName" th:value="${user.firstName}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">First Name:</span>
+                                <span class="text-gray-100 view-field" th:text="${user.firstName}"></span>
+                                <div class="edit-field flex-1">
+                                    <input type="text" name="firstName" th:value="${user.firstName}"
+                                           class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                                </div>
+                            </div>
 
-                        <!-- Last Name -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Last Name</p>
-                            <p class="text-gray-100 font-medium view-field" th:text="${user.lastName}"></p>
-                            <input type="text" name="lastName" th:value="${user.lastName}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">Last Name:</span>
+                                <span class="text-gray-100 view-field" th:text="${user.lastName}"></span>
+                                <div class="edit-field flex-1">
+                                    <input type="text" name="lastName" th:value="${user.lastName}"
+                                           class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                                </div>
+                            </div>
 
-                        <!-- Email (read-only) -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Email</p>
-                            <p class="text-gray-100 font-medium break-all" th:text="${user.email}"></p>
-                        </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">Email:</span>
+                                <span class="text-gray-100 break-all" th:text="${user.email}"></span>
+                            </div>
 
-                        <!-- Username (read-only) -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Username</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.username}"></p>
-                        </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">Username:</span>
+                                <span class="text-gray-100" th:text="${user.username}"></span>
+                            </div>
 
-                        <!-- Birth Date -->
-                        <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Date</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></p>
-                            <input type="date" name="birthDate" th:value="${user.regularProfile.birthDate}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
+                            <div th:if="${user.regularProfile != null}" class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">Birth Date:</span>
+                                <span class="text-gray-100 view-field"
+                                      th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></span>
+                                <div class="edit-field flex-1">
+                                    <input type="date" name="birthDate" th:value="${user.regularProfile.birthDate}"
+                                           class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                                </div>
+                            </div>
 
-                        <!-- Birth Place -->
-                        <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Place</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></p>
-                            <input type="text" name="birthPlace" th:value="${user.regularProfile.birthPlace}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none" placeholder="Enter birth place">
-                        </div>
+                            <div th:if="${user.regularProfile != null}" class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">Birth Place:</span>
+                                <span class="text-gray-100 view-field"
+                                      th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></span>
+                                <div class="edit-field flex-1">
+                                    <input type="text" name="birthPlace" th:value="${user.regularProfile.birthPlace}"
+                                           class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none"
+                                           placeholder="Enter birth place">
+                                </div>
+                            </div>
 
-                        <!-- Birth Time -->
-                        <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Time</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></p>
-                            <input type="time" name="birthTime" th:value="${user.regularProfile.birthTime}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
-
-                        <!-- Account Status -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-2 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Account Status
-                            </p>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                                <span class="text-gray-100 font-medium">Active</span>
+                            <div th:if="${user.regularProfile != null}" class="flex items-center gap-4">
+                                <span class="text-gray-400 text-sm w-28 flex-shrink-0">Birth Time:</span>
+                                <span class="text-gray-100 view-field"
+                                      th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></span>
+                                <div class="edit-field flex-1">
+                                    <input type="time" name="birthTime" th:value="${user.regularProfile.birthTime}"
+                                           class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -304,12 +324,15 @@
                 </form>
 
             </div>
-            </div>
 
         </section>
 
         <!-- RIGHT SIDEBAR - Empty spacer to maintain consistent width with wizard profile -->
-        <aside class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
+        <aside class="w-full lg:w-80 lg:min-w-80 flex-shrink-0 overflow-y-auto">
+            <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5 min-h-96">
+                <!-- Placeholder content -->
+                <div class="opacity-0">Spacer</div>
+            </div>
         </aside>
 
     </div>
@@ -506,8 +529,8 @@
         }
 
         // Character counter for About Me field
-        const aboutMeField = document.getElementById('aboutMeField');
-        const charCount = document.getElementById('charCount');
+        const aboutMeField = document.getElementById('aboutMeFieldRegular');
+        const charCount = document.getElementById('charCountRegular');
 
         if (aboutMeField && charCount) {
             // Update counter on page load
@@ -734,7 +757,7 @@
 
                 if (result.success) {
                     // Update avatar image
-                    document.getElementById('profileAvatar').src = result.avatarUrl + '?t=' + Date.now();
+                    document.getElementById('profileAvatarRegular').src = result.avatarUrl + '?t=' + Date.now();
                     showToast('Avatar updated successfully!', 'success');
                     closeAvatarUpload();
                 } else {

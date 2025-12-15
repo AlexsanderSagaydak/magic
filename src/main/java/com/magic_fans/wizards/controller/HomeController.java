@@ -2,6 +2,7 @@ package com.magic_fans.wizards.controller;
 
 import com.magic_fans.wizards.service.UserService;
 import com.magic_fans.wizards.service.WizardSkillsService;
+import com.magic_fans.wizards.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,9 @@ public class HomeController {
 
     @Autowired
     private WizardSkillsService wizardSkillsService;
+
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/")
     public String home(Model model, HttpServletResponse response) {
@@ -93,13 +97,18 @@ public class HomeController {
             var user = userOpt.get();
             model.addAttribute("user", user);
 
-            // Add skills for wizards
-            if ("wizard".equals(user.getRole()) && user.getWizardProfile() != null) {
-                model.addAttribute("userSkills",
-                    wizardSkillsService.getAllSkillsForWizard(user.getWizardProfile().getId()));
+            // Add data for wizards
+            if ("wizard".equals(user.getRole())) {
+                if (user.getWizardProfile() != null) {
+                    model.addAttribute("userSkills",
+                        wizardSkillsService.getAllSkillsForWizard(user.getWizardProfile().getId()));
+                }
+                // Add posts for wizards
+                model.addAttribute("posts", postService.getPostsByAuthor(user.getId()));
             }
 
-            return "my-profile";
+            // Return appropriate view based on role
+            return "wizard".equals(user.getRole()) ? "wizard-my-profile" : "regular-my-profile";
         }
 
         // If user not found, redirect to feed
