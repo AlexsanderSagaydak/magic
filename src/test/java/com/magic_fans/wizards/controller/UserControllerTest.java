@@ -215,7 +215,7 @@ class UserControllerTest {
         String view = userController.getUserProfile(1, model);
 
         // Then
-        assertEquals("my-profile", view);
+        assertEquals("regular-my-profile", view);
         verify(model, times(1)).addAttribute("user", testRegularUser);
         verify(model, times(1)).addAttribute("isOwnProfile", true);
     }

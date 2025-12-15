@@ -151,8 +151,8 @@
         <!-- PROFILE CONTENT (scrollable center) -->
         <section class="flex-1 overflow-y-auto px-1">
 
-            <!-- TAB NAVIGATION (only for wizards) -->
-            <div th:if="${user.role == 'wizard'}" class="mb-6 border-b border-dark-tertiary">
+            <!-- TAB NAVIGATION -->
+            <div class="mb-6 border-b border-dark-tertiary">
                 <div class="flex gap-4">
                     <button class="tab-btn px-6 py-3 font-medium text-sm transition border-b-2 border-accent text-accent"
                             data-tab="profile">
@@ -406,168 +406,9 @@
             </div>
             <!-- END TAB CONTENT -->
 
-            <!-- REGULAR USER PROFILE (no tabs) -->
-            <div th:if="${user.role == 'regular'}">
-            <!-- PROFILE CARD -->
-            <div id="profileCard" class="bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden p-8">
-
-                <!-- HEADER TOP: AVATAR -->
-                <div class="relative flex items-start gap-6 mb-6 pb-6 border-b border-dark-tertiary">
-
-                    <div class="relative">
-                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent bg-dark-tertiary">
-                            <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/images/default-avatar.svg'}"
-                                 id="profileAvatarRegular"
-                                 class="w-full h-full object-cover"
-                                 onerror="this.src='/images/default-avatar.svg'">
-                        </div>
-                        <button onclick="openAvatarUpload()"
-                                class="absolute bottom-0 right-0 bg-accent hover:bg-blue-600 p-2 rounded-full border-2 border-dark transition">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="flex-1 pt-2">
-                        <h2 class="text-3xl font-bold mb-2">
-                            <span th:text="${user.firstName}"></span>
-                            <span th:text="${user.lastName}"></span>
-                        </h2>
-
-                        <p class="text-gray-400 text-lg mb-4">
-                            @<span th:text="${user.username}"></span>
-                        </p>
-
-                        <!-- ROLE BADGE -->
-                        <div class="flex gap-2 mb-4">
-                            <span class="inline-block px-3 py-1 bg-blue-900/30 border border-blue-500 rounded-full text-blue-300 text-sm font-medium">Regular User</span>
-                        </div>
-
-                    </div>
-
-                    <!-- EDIT BUTTON (bottom right corner) -->
-                    <button onclick="toggleEditMode()"
-                            class="view-field absolute bottom-2 right-2 p-2 rounded-lg hover:bg-dark-tertiary transition"
-                            title="Edit Profile">
-                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                    </button>
-
-                </div>
-
-                <!-- EDIT MODE BUTTONS (centered under header) -->
-                <div class="edit-field edit-buttons-center mb-6">
-                    <button type="submit" form="profileFormRegular"
-                            class="px-8 py-2 rounded-full bg-accent hover:bg-blue-500 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200">
-                        Save Changes
-                    </button>
-                    <button type="button" onclick="toggleEditMode()"
-                            class="px-8 py-2 rounded-full bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-white font-semibold transition-all duration-200">
-                        Cancel
-                    </button>
-                </div>
-
-                <!-- ============================= -->
-                <!-- FORM START -->
-                <!-- ============================= -->
-                <form id="profileFormRegular" method="post" th:action="@{/users/profile/save}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-                    <!-- PROFILE INFORMATION -->
-                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Profile Information
-                    </h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- First Name -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">First Name</p>
-                            <p class="text-gray-100 font-medium view-field" th:text="${user.firstName}"></p>
-                            <input type="text" name="firstName" th:value="${user.firstName}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Last Name</p>
-                            <p class="text-gray-100 font-medium view-field" th:text="${user.lastName}"></p>
-                            <input type="text" name="lastName" th:value="${user.lastName}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
-
-                        <!-- Email (read-only) -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Email</p>
-                            <p class="text-gray-100 font-medium break-all" th:text="${user.email}"></p>
-                        </div>
-
-                        <!-- Username (read-only) -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Username</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.username}"></p>
-                        </div>
-
-                        <!-- Birth Date -->
-                        <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Date</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></p>
-                            <input type="date" name="birthDate" th:value="${user.regularProfile.birthDate}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
-
-                        <!-- Birth Place -->
-                        <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Place</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></p>
-                            <input type="text" name="birthPlace" th:value="${user.regularProfile.birthPlace}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none" placeholder="Enter birth place">
-                        </div>
-
-                        <!-- Birth Time -->
-                        <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Time</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></p>
-                            <input type="time" name="birthTime" th:value="${user.regularProfile.birthTime}"
-                                   class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
-                        </div>
-
-                        <!-- Account Status -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-2 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Account Status
-                            </p>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                                <span class="text-gray-100 font-medium">Active</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
-            </div>
-            <!-- END REGULAR USER PROFILE -->
-
-        </section>
 
         <!-- RIGHT SIDEBAR - WIZARD SKILLS ACCORDION -->
-        <aside th:if="${user.role == 'wizard'}" class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
+        <aside class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
             <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">
 
                 <h3 class="text-lg font-bold mb-4 text-gray-100">Мои навыки</h3>

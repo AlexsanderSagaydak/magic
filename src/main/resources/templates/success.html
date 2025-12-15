@@ -84,8 +84,8 @@
                     <!-- Details -->
                     <div class="bg-dark border border-dark-tertiary rounded-lg p-6 space-y-3 text-left">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-400" th:text="#{success.userId}">User ID:</span>
-                            <span class="font-mono text-accent font-semibold" th:text="${userId}"></span>
+                            <span class="text-gray-400">Имя пользователя в системе:</span>
+                            <span class="font-mono text-accent font-semibold" th:text="${userName}"></span>
                         </div>
                         <div class="border-t border-dark-tertiary pt-3">
                             <p class="text-sm text-gray-500" th:text="#{success.status}">Your account is now active and ready to use.</p>
@@ -96,43 +96,35 @@
                     <div class="space-y-3">
                         <h4 class="font-semibold text-gray-300" th:text="#{success.nextSteps}">What's Next?</h4>
                         <div class="space-y-2 text-left">
-                            <!-- Step 1: Complete Profile -->
-                            <div class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg">
-                                <span class="text-accent font-semibold">1</span>
-                                <span class="text-gray-400" th:text="#{success.step1}">Complete your profile with additional information</span>
-                            </div>
-
-                            <!-- Step 2: Choose Specialization (only for wizard role) -->
+                            <!-- Step 1: Choose Specialization (only for wizard role) -->
                             <div th:if="${userRole == 'wizard'}">
-                                <div onclick="openSpecializationModal()" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
-                                    <span class="text-accent font-semibold">2</span>
-                                    <span class="text-gray-400">Укажите вашу специализацию</span>
+                                <div id="specializationStep" onclick="openSpecializationModal()" class="flex items-start gap-3 p-3 bg-blue-900/20 border-2 border-accent rounded-lg hover:bg-blue-900/30 transition cursor-pointer shadow-lg shadow-accent/20">
+                                    <span class="text-accent font-semibold">1</span>
+                                    <span id="specializationText" class="text-gray-200 font-medium">Укажите вашу специализацию</span>
+                                    <svg id="specializationCheck" class="w-6 h-6 text-green-400 hidden ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
                                 </div>
                             </div>
 
-                            <!-- Step 3: Start Learning (numbering changes based on role) -->
-                            <div th:if="${userRole == 'wizard'}">
-                                <a href="/feed" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
-                                    <span class="text-accent font-semibold">3</span>
-                                    <span class="text-gray-400" th:text="#{success.step3}">Start learning and exploring the magical world</span>
-                                </a>
-                            </div>
-                            <div th:if="${userRole != 'wizard'}">
-                                <a href="/feed" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg hover:border-accent hover:bg-dark-tertiary/50 transition cursor-pointer">
+                            <!-- Step 2: Complete Profile -->
+                            <div th:class="${userRole == 'wizard'} ? '' : 'flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg'">
+                                <div th:if="${userRole == 'wizard'}" class="flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg">
                                     <span class="text-accent font-semibold">2</span>
-                                    <span class="text-gray-400" th:text="#{success.step3}">Start learning and exploring the magical world</span>
-                                </a>
+                                    <span class="text-gray-400" th:text="#{success.step1}">Complete your profile with additional information</span>
+                                </div>
+                                <div th:if="${userRole != 'wizard'}" class="flex items-start gap-3">
+                                    <span class="text-accent font-semibold">1</span>
+                                    <span class="text-gray-400" th:text="#{success.step1}">Complete your profile with additional information</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex gap-4 pt-6">
-                        <a href="/" class="flex-1 py-3 px-4 bg-dark-tertiary hover:bg-dark-tertiary/80 border border-dark-tertiary rounded-lg transition font-semibold text-center" th:text="#{success.button.home}">
-                            Go to Home
-                        </a>
-                        <a th:href="@{/users/{id}(id=${userId})}" class="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold rounded-lg transition text-center" th:text="#{success.button.profile}">
-                            View Profile
+                    <div class="flex justify-center pt-6">
+                        <a href="/my-profile" class="inline-block py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold rounded-lg transition text-center">
+                            Перейти к настройкам профиля
                         </a>
                     </div>
                 </div>
@@ -309,6 +301,20 @@
                 if (response.ok) {
                     alert('Специализация сохранена!');
                     closeSpecializationModal();
+
+                    // Update specialization step to show completion
+                    const stepDiv = document.getElementById('specializationStep');
+                    const checkIcon = document.getElementById('specializationCheck');
+
+                    if (stepDiv && checkIcon) {
+                        // Remove highlight and make non-clickable
+                        stepDiv.className = 'flex items-start gap-3 p-3 bg-dark border border-dark-tertiary rounded-lg transition';
+                        stepDiv.onclick = null;
+                        stepDiv.style.cursor = 'default';
+
+                        // Show green checkmark
+                        checkIcon.classList.remove('hidden');
+                    }
                 } else {
                     alert('Ошибка при сохранении специализации');
                 }

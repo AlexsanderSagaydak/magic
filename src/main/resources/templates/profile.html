@@ -22,21 +22,37 @@
         }
     </script>
     <script src="/js/app.js"></script>
+
+    <style>
+        /* Hide scrollbars */
+        section::-webkit-scrollbar,
+        aside::-webkit-scrollbar {
+            display: none;
+        }
+
+        section,
+        aside {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
 </head>
-<body class="h-screen overflow-hidden bg-dark text-gray-100 font-sans antialiased">
+<body class="h-screen overflow-hidden bg-dark text-gray-100 font-sans antialiased flex flex-col">
 
 <!-- NAVIGATION -->
 <div th:replace="~{fragments::header}"></div>
 
 <!-- MAIN CONTENT -->
-<main class="h-screen overflow-y-auto bg-gradient-to-b from-dark via-dark-secondary to-dark pt-24 pb-12 px-4">
-    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-center gap-8">
+<main class="flex-1 flex bg-gradient-to-b from-dark via-dark-secondary to-dark overflow-hidden mt-16">
+    <div class="w-full max-w-7xl mx-auto flex gap-3 px-4 pt-6 pb-12">
 
         <!-- LEFT SIDEBAR -->
-        <div th:replace="~{fragments::sidebar}"></div>
+        <div class="w-full lg:w-64 flex-shrink-0 overflow-y-auto">
+            <div th:replace="~{fragments::sidebar}"></div>
+        </div>
 
         <!-- CONTENT -->
-        <section class="flex-1 max-w-3xl mx-auto flex flex-col">
+        <section class="flex-1 overflow-y-auto px-1">
 
             <!-- PROFILE CARD -->
             <div class="bg-dark-secondary border border-dark-tertiary rounded-xl overflow-hidden p-8">
@@ -73,85 +89,93 @@
                     </div>
                 </div>
 
-                <!-- INFORMATION BLOCK -->
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Profile Information
-                </h3>
-
-                <!-- INFO GRID -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    <!-- First Name -->
-                    <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                        <p class="text-gray-400 text-sm mb-2">First Name</p>
-                        <p class="text-gray-100 font-medium" th:text="${user.firstName}"></p>
+                <!-- WIZARD SIMPLIFIED VIEW -->
+                <div th:if="${user.role == 'wizard'}">
+                    <!-- О СЕБЕ -->
+                    <div class="mb-8">
+                        <h3 class="text-sm mb-3 text-gray-400">О себе</h3>
+                        <hr class="border-dark-tertiary mb-3">
+                        <p class="text-gray-100" th:text="${user.aboutMe != null && !user.aboutMe.isEmpty() ? user.aboutMe : 'Не указано'}"></p>
                     </div>
 
-                    <!-- Last Name -->
-                    <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                        <p class="text-gray-400 text-sm mb-2">Last Name</p>
-                        <p class="text-gray-100 font-medium" th:text="${user.lastName}"></p>
-                    </div>
-
-                    <!-- REGULAR USER SPECIFIC FIELDS -->
-                    <div th:if="${user.role == 'regular' && user.regularProfile != null}">
-                        <!-- Birth Date -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Birth Date</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></p>
-                        </div>
-
-                        <!-- Birth Place -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Birth Place</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></p>
-                        </div>
-
-                        <!-- Birth Time -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-2">Birth Time</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></p>
+                    <!-- МОИ НАВЫКИ -->
+                    <div class="mb-8">
+                        <h3 class="text-sm mb-3 text-gray-400">Мои навыки</h3>
+                        <hr class="border-dark-tertiary mb-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span th:each="skill : ${userSkills}"
+                                  class="inline-block bg-dark-tertiary border border-accent px-3 py-1 rounded-full text-xs"
+                                  th:text="${skill}">
+                            </span>
+                            <span th:if="${userSkills == null || userSkills.isEmpty()}" class="text-gray-500 text-sm">Навыки не указаны</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- WIZARD USER SPECIFIC FIELDS -->
-                    <div th:if="${user.role == 'wizard' && user.wizardProfile != null}">
-                        <!-- Years of Experience -->
+                <!-- REGULAR USER FULL VIEW -->
+                <div th:if="${user.role == 'regular'}">
+                    <!-- INFORMATION BLOCK -->
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Profile Information
+                    </h3>
+
+                    <!-- INFO GRID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- First Name -->
                         <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2">Years of Experience</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.wizardProfile.yearsOfExperience != null ? user.wizardProfile.yearsOfExperience + ' years' : '0 years'}"></p>
+                            <p class="text-gray-400 text-sm mb-2">First Name</p>
+                            <p class="text-gray-100 font-medium" th:text="${user.firstName}"></p>
                         </div>
 
-                        <!-- Skills -->
-                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-3">Skills & Abilities</p>
-                            <div class="flex flex-wrap gap-2">
-                                <span th:each="skill : ${user.wizardProfile.skills}" class="px-3 py-1 bg-accent/20 border border-accent rounded-full text-sm text-accent" th:text="${skill}"></span>
-                                <span th:if="${user.wizardProfile.skills.isEmpty()}" class="text-gray-500">No skills listed</span>
+                        <!-- Last Name -->
+                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
+                            <p class="text-gray-400 text-sm mb-2">Last Name</p>
+                            <p class="text-gray-100 font-medium" th:text="${user.lastName}"></p>
+                        </div>
+
+                        <!-- REGULAR USER SPECIFIC FIELDS -->
+                        <div th:if="${user.regularProfile != null}">
+                            <!-- Birth Date -->
+                            <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
+                                <p class="text-gray-400 text-sm mb-2">Birth Date</p>
+                                <p class="text-gray-100 font-medium" th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></p>
+                            </div>
+
+                            <!-- Birth Place -->
+                            <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
+                                <p class="text-gray-400 text-sm mb-2">Birth Place</p>
+                                <p class="text-gray-100 font-medium" th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></p>
+                            </div>
+
+                            <!-- Birth Time -->
+                            <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
+                                <p class="text-gray-400 text-sm mb-2">Birth Time</p>
+                                <p class="text-gray-100 font-medium" th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Status -->
-                    <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                        <p class="text-gray-400 text-sm mb-2 flex items-center gap-2">
-                            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Account Status
-                        </p>
+                        <!-- Status -->
+                        <div class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
+                            <p class="text-gray-400 text-sm mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Account Status
+                            </p>
 
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                            <span class="text-gray-100 font-medium">Active</span>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                                <span class="text-gray-100 font-medium">Active</span>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
 
                 <!-- POSTS SECTION -->
@@ -224,6 +248,10 @@
             </div>
 
         </section>
+
+        <!-- RIGHT SIDEBAR - Empty spacer to maintain consistent width with wizard profile -->
+        <aside class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
+        </aside>
 
     </div>
 </main>

@@ -108,7 +108,7 @@ public class UserController {
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
             redirectAttributes.addAttribute("id", savedUser.getId());
-            redirectAttributes.addAttribute("name", savedUser.getFirstName());
+            redirectAttributes.addAttribute("name", savedUser.getUsername());
             return "redirect:/users/success";
         } catch (Exception e) {
             model.addAttribute("error", "An error occurred during registration. Please try again.");
@@ -171,7 +171,8 @@ public class UserController {
                             model.addAttribute("posts", postService.getPostsByAuthor(viewedUser.getId()));
                         }
 
-                        return "my-profile";
+                        // Return appropriate view based on role
+                        return "wizard".equals(viewedUser.getRole()) ? "wizard-my-profile" : "regular-my-profile";
                     }
 
                     // Regular users cannot view other regular users
@@ -209,6 +210,12 @@ public class UserController {
                             likedPosts.put(post.getId(), postLikeService.isLiked(post.getId(), currentUser.getId()));
                         }
                         model.addAttribute("likedPosts", likedPosts);
+
+                        // Add skills for wizards
+                        if (viewedUser.getWizardProfile() != null) {
+                            model.addAttribute("userSkills",
+                                wizardSkillsService.getAllSkillsForWizard(viewedUser.getWizardProfile().getId()));
+                        }
                     }
 
                     return "profile";
