@@ -43,8 +43,8 @@ public class ImageUploadService {
     private static final int THUMBNAIL_SIZE = 150;      // 150x150
     private static final int MEDIUM_WIDTH = 800;        // 800px ширина
     private static final int LARGE_WIDTH = 1200;        // 1200px ширина
-    private static final int MAX_WIDTH = 2048;          // Максимум 2048px
-    private static final int MAX_HEIGHT = 2048;
+    private static final int MAX_WIDTH = 4096;          // Максимум 4096px
+    private static final int MAX_HEIGHT = 4096;
 
     // ============= VALIDATION =============
 
@@ -77,14 +77,6 @@ public class ImageUploadService {
             BufferedImage image = ImageIO.read(file.getInputStream());
             if (image == null) {
                 throw new IllegalArgumentException("File is not a valid image");
-            }
-
-            // Проверка разрешения
-            if (image.getWidth() > MAX_WIDTH || image.getHeight() > MAX_HEIGHT) {
-                throw new IllegalArgumentException(
-                    String.format("Image dimensions exceed maximum allowed size of %dx%d",
-                        MAX_WIDTH, MAX_HEIGHT)
-                );
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to read image file", e);
