@@ -161,11 +161,13 @@
             <div class="mb-6 border-b border-dark-tertiary">
                 <div class="flex gap-4">
                     <button class="tab-btn px-6 py-3 font-medium text-sm transition border-b-2 border-accent text-accent"
-                            data-tab="profile">
+                            data-tab="profile"
+                            th:text="#{wizard.tabs.profile}">
                         Мой профиль
                     </button>
                     <button class="tab-btn px-6 py-3 font-medium text-sm transition border-b-2 border-transparent text-gray-400 hover:text-gray-300"
-                            data-tab="posts">
+                            data-tab="posts"
+                            th:text="#{wizard.tabs.posts}">
                         Мои посты
                     </button>
                 </div>
@@ -397,14 +399,14 @@
 
                 <!-- POSTS SECTION (for wizards only) -->
                 <div class="mt-0">
-                    <h3 class="text-2xl font-bold mb-6">My Posts</h3>
+                    <h3 class="text-2xl font-bold mb-6" th:text="#{posts.section.title}">My Posts</h3>
 
                     <!-- CREATE POST FORM -->
                     <div class="bg-dark p-4 rounded-xl border border-dark-tertiary mb-6">
                         <textarea id="postContent"
                                   class="w-full bg-dark-tertiary border border-dark-tertiary rounded px-3 py-2 text-sm text-gray-100 resize-none"
                                   rows="3"
-                                  placeholder="What's on your mind?"></textarea>
+                                  th:placeholder="#{posts.create.placeholder}"></textarea>
 
                         <!-- Image Upload Section -->
                         <div class="mt-3">
@@ -415,12 +417,12 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    Upload Image
+                                    <span th:text="#{posts.upload.image}">Upload Image</span>
                                 </button>
-                                <span class="text-xs text-gray-500">or</span>
+                                <span class="text-xs text-gray-500" th:text="#{posts.upload.or}">or</span>
                                 <input type="text" id="postImageUrl"
                                        class="flex-1 bg-dark-tertiary border border-dark-tertiary rounded px-3 py-2 text-sm text-gray-100"
-                                       placeholder="Paste image URL">
+                                       th:placeholder="#{posts.upload.url.placeholder}">
                             </div>
 
                             <!-- Image Preview -->
@@ -439,7 +441,8 @@
 
                         <div class="flex justify-end mt-3">
                             <button onclick="createPost()"
-                                    class="px-6 py-2 bg-accent hover:bg-blue-600 rounded transition text-sm font-medium">
+                                    class="px-6 py-2 bg-accent hover:bg-blue-600 rounded transition text-sm font-medium"
+                                    th:text="#{posts.button.post}">
                                 Post
                             </button>
                         </div>
@@ -487,7 +490,7 @@
                         </div>
 
                         <div th:if="${posts == null || posts.isEmpty()}" class="text-center py-12 text-gray-400">
-                            <p>No posts yet. Create your first post!</p>
+                            <p th:text="#{posts.empty.message}">No posts yet. Create your first post!</p>
                         </div>
                     </div>
                 </div>
@@ -505,7 +508,7 @@
         <aside class="w-full lg:w-80 flex-shrink-0 overflow-y-auto">
             <div class="bg-dark-secondary border border-dark-tertiary rounded-xl p-5">
 
-                <h3 class="text-lg font-bold mb-4 text-gray-100">Мои навыки</h3>
+                <h3 class="text-lg font-bold mb-4 text-gray-100" th:text="#{wizard.skills.sidebar.title}">Мои навыки</h3>
 
                 <!-- ACCORDION SECTIONS -->
                 <div class="space-y-2 mb-6 wizard-skills-accordion">
@@ -1017,7 +1020,8 @@
 
                 <!-- SAVE BUTTON -->
                 <button type="button" onclick="saveWizardSkills()"
-                        class="w-full px-4 py-3 bg-accent hover:bg-blue-600 text-white font-medium rounded-lg transition">
+                        class="w-full px-4 py-3 bg-accent hover:bg-blue-600 text-white font-medium rounded-lg transition"
+                        th:text="#{wizard.skills.sidebar.save}">
                     Сохранить изменения
                 </button>
 
