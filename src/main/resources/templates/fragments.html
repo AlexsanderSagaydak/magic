@@ -40,12 +40,20 @@
                 </span>
             </div>
 
-            <form action="/logout" method="post">
+            <form id="logoutForm" action="/logout" method="post">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition">
+                <button type="button" onclick="confirmLogout()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition">
                     Logout
                 </button>
             </form>
+
+            <script>
+                function confirmLogout() {
+                    showConfirm('Вы уверены, что хотите выйти из системы?', function() {
+                        document.getElementById('logoutForm').submit();
+                    });
+                }
+            </script>
         </div>
     </nav>
 </header>
@@ -658,6 +666,86 @@
         </div>
     </div>
 
+</div>
+
+<!-- MODALS FRAGMENT -->
+<div th:fragment="modals">
+    <!-- Custom Confirm Modal -->
+    <div id="customConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 items-center justify-center">
+        <div class="bg-dark-secondary rounded-xl max-w-md w-full mx-4 p-6 border border-dark-tertiary" onclick="event.stopPropagation()">
+            <div class="text-center">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-12 h-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <p id="customConfirmMessage" class="text-gray-200 text-lg mb-6"></p>
+                <div class="flex gap-3">
+                    <button id="customCancelButton" class="flex-1 px-6 py-3 bg-dark-tertiary hover:bg-dark rounded-lg transition text-gray-200 font-medium">
+                        Отмена
+                    </button>
+                    <button id="customConfirmButton" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition text-white font-medium">
+                        Выйти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showConfirm(message, onConfirm, onCancel = null) {
+            const modal = document.getElementById('customConfirmModal');
+            const messageEl = document.getElementById('customConfirmMessage');
+
+            if (!modal || !messageEl) return;
+
+            messageEl.textContent = message;
+
+            // Set up confirm button
+            const confirmBtn = document.getElementById('customConfirmButton');
+            const cancelBtn = document.getElementById('customCancelButton');
+
+            // Remove old event listeners by cloning
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            // Add new event listeners
+            newConfirmBtn.addEventListener('click', () => {
+                closeConfirm();
+                if (onConfirm) onConfirm();
+            });
+
+            newCancelBtn.addEventListener('click', () => {
+                closeConfirm();
+                if (onCancel) onCancel();
+            });
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirm() {
+            const modal = document.getElementById('customConfirmModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // Close modal on outside click
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('customConfirmModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeConfirm();
+                    }
+                });
+            }
+        });
+    </script>
 </div>
 
 </html>

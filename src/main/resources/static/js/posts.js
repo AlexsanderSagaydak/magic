@@ -13,7 +13,7 @@ function handlePostImageSelect(event) {
 
     // Validate file type
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-        alert('Invalid file format. Allowed formats: JPEG, PNG, WebP, GIF');
+        showAlert('Invalid file format. Allowed formats: JPEG, PNG, WebP, GIF', 'error');
         clearPostImage();
         return;
     }
@@ -21,7 +21,7 @@ function handlePostImageSelect(event) {
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
         const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        alert(`File size (${sizeMB}MB) exceeds 5MB limit. Please choose a smaller image.`);
+        showAlert(`File size (${sizeMB}MB) exceeds 5MB limit. Please choose a smaller image.`, 'error');
         clearPostImage();
         return;
     }
@@ -59,7 +59,7 @@ async function createPost() {
     const imageUrl = document.getElementById('postImageUrl').value.trim();
 
     if (!content) {
-        alert('Please enter some content');
+        showAlert('Please enter some content', 'error');
         return;
     }
 
@@ -85,7 +85,7 @@ async function createPost() {
             const uploadResult = await uploadResponse.json();
 
             if (!uploadResult.success) {
-                alert(uploadResult.message || 'Failed to upload image');
+                showAlert(uploadResult.message || 'Failed to upload image', 'error');
                 return;
             }
 
@@ -115,20 +115,23 @@ async function createPost() {
             localStorage.setItem('postActionReload', 'true');
             location.reload();
         } else {
-            alert(result.message || 'Error creating post');
+            showAlert(result.message || 'Error creating post', 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error creating post');
+        showAlert('Error creating post', 'error');
     }
 }
 
 function deletePost(button) {
-    if (!confirm('Are you sure you want to delete this post?')) {
-        return;
-    }
-
     const postId = button.getAttribute('data-post-id');
+
+    showConfirm('Are you sure you want to delete this post?', () => {
+        performDeletePost(postId);
+    });
+}
+
+function performDeletePost(postId) {
     const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
     const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
@@ -147,11 +150,11 @@ function deletePost(button) {
             localStorage.setItem('postActionReload', 'true');
             location.reload();
         } else {
-            alert(result.message || 'Error deleting post');
+            showAlert(result.message || 'Error deleting post', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error deleting post');
+        showAlert('Error deleting post', 'error');
     });
 }

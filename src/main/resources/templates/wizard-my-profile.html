@@ -207,8 +207,11 @@
                         </div>
 
                         <h2 class="text-3xl font-bold mb-2">
-                            <span th:text="${user.firstName}"></span>
-                            <span th:text="${user.lastName}"></span>
+                            <span th:if="${(user.firstName != null && !user.firstName.isEmpty()) || (user.lastName != null && !user.lastName.isEmpty())}">
+                                <span th:text="${(user.firstName ?: '') + (user.firstName != null && !user.firstName.isEmpty() && user.lastName != null && !user.lastName.isEmpty() ? ' ' : '') + (user.lastName ?: '')}"></span>
+                            </span>
+                            <span th:if="${(user.firstName == null || user.firstName.isEmpty()) && (user.lastName == null || user.lastName.isEmpty())}"
+                                  th:text="${user.username}"></span>
                         </h2>
 
                         <p class="text-gray-400 text-lg mb-4">
@@ -220,11 +223,58 @@
                             <span class="text-gray-400 text-sm">Специалист:</span>
                             <span class="text-gray-100 text-sm" th:text="${user.specialization != null && !user.specialization.isEmpty() ? user.specialization : 'Не указано'}"></span>
                         </div>
-                        <div class="edit-field">
-                            <label class="text-gray-400 text-sm mb-1 block">Специалист</label>
-                            <input type="text" name="specialization" th:value="${user.specialization}"
-                                   class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none"
-                                   placeholder="Укажите вашу специализацию">
+                        <div class="edit-field space-y-3">
+                            <!-- Dropdown -->
+                            <div>
+                                <label class="text-gray-400 text-sm mb-2 block">Выберите из списка:</label>
+                                <select id="profileSpecializationDropdown" class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
+                                    <option value="">-- Выберите специализацию --</option>
+                                    <option value="Знахарь" th:selected="${user.specialization == 'Знахарь'}">Знахарь</option>
+                                    <option value="Ведун/Ведунья" th:selected="${user.specialization == 'Ведун/Ведунья'}">Ведун/Ведунья</option>
+                                    <option value="Шептун" th:selected="${user.specialization == 'Шептун'}">Шептун</option>
+                                    <option value="Заговорщик" th:selected="${user.specialization == 'Заговорщик'}">Заговорщик</option>
+                                    <option value="Ворожея/Ворожей" th:selected="${user.specialization == 'Ворожея/Ворожей'}">Ворожея/Ворожей</option>
+                                    <option value="Зорник/Зорница" th:selected="${user.specialization == 'Зорник/Зорница'}">Зорник/Зорница</option>
+                                    <option value="Толкователь снов" th:selected="${user.specialization == 'Толкователь снов'}">Толкователь снов</option>
+                                    <option value="Эзотерик" th:selected="${user.specialization == 'Эзотерик'}">Эзотерик</option>
+                                    <option value="Таролог" th:selected="${user.specialization == 'Таролог'}">Таролог</option>
+                                    <option value="Нумеролог" th:selected="${user.specialization == 'Нумеролог'}">Нумеролог</option>
+                                    <option value="Астролог" th:selected="${user.specialization == 'Астролог'}">Астролог</option>
+                                    <option value="Энергетический практик" th:selected="${user.specialization == 'Энергетический практик'}">Энергетический практик</option>
+                                    <option value="Регрессолог" th:selected="${user.specialization == 'Регрессолог'}">Регрессолог</option>
+                                    <option value="Медиум" th:selected="${user.specialization == 'Медиум'}">Медиум</option>
+                                    <option value="Гипнолог-эзотерик" th:selected="${user.specialization == 'Гипнолог-эзотерик'}">Гипнолог-эзотерик</option>
+                                    <option value="Психоэнергет" th:selected="${user.specialization == 'Психоэнергет'}">Психоэнергет</option>
+                                    <option value="Натуропат" th:selected="${user.specialization == 'Натуропат'}">Натуропат</option>
+                                    <option value="Ароматерапевт" th:selected="${user.specialization == 'Ароматерапевт'}">Ароматерапевт</option>
+                                    <option value="Космоэнергет" th:selected="${user.specialization == 'Космоэнергет'}">Космоэнергет</option>
+                                    <option value="Хиромант" th:selected="${user.specialization == 'Хиромант'}">Хиромант</option>
+                                    <option value="Оракул-практик" th:selected="${user.specialization == 'Оракул-практик'}">Оракул-практик</option>
+                                    <option value="Кофейный гадатель" th:selected="${user.specialization == 'Кофейный гадатель'}">Кофейный гадатель</option>
+                                    <option value="Ониксомант / гадатель по камням" th:selected="${user.specialization == 'Ониксомант / гадатель по камням'}">Ониксомант / гадатель по камням</option>
+                                    <option value="Аура-ридер" th:selected="${user.specialization == 'Аура-ридер'}">Аура-ридер</option>
+                                    <option value="Тета-хиллер" th:selected="${user.specialization == 'Тета-хиллер'}">Тета-хиллер</option>
+                                    <option value="Коуч-эзотерик" th:selected="${user.specialization == 'Коуч-эзотерик'}">Коуч-эзотерик</option>
+                                    <option value="Проводник намерений" th:selected="${user.specialization == 'Проводник намерений'}">Проводник намерений</option>
+                                    <option value="Ирридолог/Диагностика по радужке глаза" th:selected="${user.specialization == 'Ирридолог/Диагностика по радужке глаза'}">Ирридолог/Диагностика по радужке глаза</option>
+                                    <option value="Практик манифестаций" th:selected="${user.specialization == 'Практик манифестаций'}">Практик манифестаций</option>
+                                    <option value="МунРитуал" th:selected="${user.specialization == 'МунРитуал'}">МунРитуал</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Input Checkbox -->
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="profileCustomSpecCheckbox" onchange="toggleProfileCustomInput()" class="w-4 h-4 rounded border-gray-600 bg-dark-tertiary text-accent focus:ring-accent">
+                                <label for="profileCustomSpecCheckbox" class="text-gray-400 text-sm cursor-pointer">Не нашли себя?</label>
+                            </div>
+
+                            <!-- Custom Input (hidden by default) -->
+                            <div id="profileCustomInputContainer" class="hidden">
+                                <label class="text-gray-400 text-sm mb-2 block">Укажите свою специализацию:</label>
+                                <input type="text" id="profileCustomSpecInput" maxlength="100" th:value="${user.specialization}"
+                                       class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none"
+                                       placeholder="Введите вашу специализацию...">
+                            </div>
                         </div>
                     </div>
 
@@ -269,6 +319,9 @@
                 <!-- ============================= -->
                 <form id="profileForm" method="post" th:action="@{/users/profile/save}" class="space-y-10">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <!-- Hidden field for specialization (moved inside form) -->
+                    <input type="hidden" id="profileSpecializationValue" name="specialization" th:value="${user.specialization}">
 
                     <!-- О СЕБЕ -->
                     <div class="mb-8">
@@ -398,7 +451,8 @@
                                         <span th:text="${user.firstName != null ? user.firstName.substring(0,1) : user.username.substring(0,1)}"></span>
                                     </div>
                                     <div>
-                                        <p class="font-medium text-sm" th:text="${user.firstName + ' ' + user.lastName}"></p>
+                                        <p class="font-medium text-sm"
+                                           th:text="${(user.firstName != null && !user.firstName.isEmpty()) || (user.lastName != null && !user.lastName.isEmpty()) ? ((user.firstName ?: '') + (user.firstName != null && !user.firstName.isEmpty() && user.lastName != null && !user.lastName.isEmpty() ? ' ' : '') + (user.lastName ?: '')) : user.username}"></p>
                                         <p class="text-xs text-gray-400" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm')}"></p>
                                     </div>
                                 </div>
@@ -974,7 +1028,83 @@
     // Initialize character counter for About Me field
     document.addEventListener('DOMContentLoaded', () => {
         initCharacterCounter('aboutMeField', 'charCount');
+        initializeSpecializationFields();
     });
+
+    // Initialize specialization fields on page load
+    function initializeSpecializationFields() {
+        const dropdown = document.getElementById('profileSpecializationDropdown');
+        const customInput = document.getElementById('profileCustomSpecInput');
+        const checkbox = document.getElementById('profileCustomSpecCheckbox');
+        const hiddenField = document.getElementById('profileSpecializationValue');
+
+        if (!dropdown || !customInput || !checkbox || !hiddenField) return;
+
+        // Check if current specialization is in dropdown options
+        const currentSpec = hiddenField.value.trim();
+        let foundInDropdown = false;
+
+        if (currentSpec) {
+            // Check if the current value exists in dropdown
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].value === currentSpec) {
+                    foundInDropdown = true;
+                    dropdown.value = currentSpec;
+                    break;
+                }
+            }
+
+            // If not found in dropdown, show custom input
+            if (!foundInDropdown && currentSpec !== '') {
+                customInput.value = currentSpec;
+                checkbox.checked = true;
+                toggleProfileCustomInput();
+            }
+        }
+
+        // Add change listeners to update hidden field
+        dropdown.addEventListener('change', updateSpecializationValue);
+        customInput.addEventListener('input', updateSpecializationValue);
+    }
+
+    // Toggle between dropdown and custom input
+    function toggleProfileCustomInput() {
+        const checkbox = document.getElementById('profileCustomSpecCheckbox');
+        const customContainer = document.getElementById('profileCustomInputContainer');
+        const dropdown = document.getElementById('profileSpecializationDropdown');
+        const customInput = document.getElementById('profileCustomSpecInput');
+
+        if (checkbox.checked) {
+            customContainer.classList.remove('hidden');
+            dropdown.value = '';
+            dropdown.disabled = true;
+            // Update hidden field with custom input value
+            updateSpecializationValue();
+        } else {
+            customContainer.classList.add('hidden');
+            dropdown.disabled = false;
+            customInput.value = '';
+            // Update hidden field with dropdown value
+            updateSpecializationValue();
+        }
+    }
+
+    // Update hidden field with current specialization value
+    function updateSpecializationValue() {
+        const dropdown = document.getElementById('profileSpecializationDropdown');
+        const customCheckbox = document.getElementById('profileCustomSpecCheckbox');
+        const customInput = document.getElementById('profileCustomSpecInput');
+        const hiddenField = document.getElementById('profileSpecializationValue');
+
+        if (!hiddenField) return;
+
+        // Set the hidden field value based on which input is active
+        if (customCheckbox.checked) {
+            hiddenField.value = customInput.value.trim();
+        } else {
+            hiddenField.value = dropdown.value;
+        }
+    }
 </script>
 
 <!-- Image Modal -->
@@ -1045,6 +1175,44 @@
         </div>
     </div>
 </div>
+
+<!-- Custom Alert Modal -->
+<div id="customAlertModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 items-center justify-center" onclick="closeAlert()">
+    <div class="bg-dark-secondary rounded-xl max-w-md w-full mx-4 p-6 border border-dark-tertiary" onclick="event.stopPropagation()">
+        <div class="text-center">
+            <div id="customAlertIcon" class="flex justify-center mb-4"></div>
+            <p id="customAlertMessage" class="text-gray-200 text-lg mb-6"></p>
+            <button onclick="closeAlert()" class="w-full px-6 py-3 bg-accent hover:bg-blue-600 rounded-lg transition text-white font-medium">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirm Modal -->
+<div id="customConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 items-center justify-center">
+    <div class="bg-dark-secondary rounded-xl max-w-md w-full mx-4 p-6 border border-dark-tertiary" onclick="event.stopPropagation()">
+        <div class="text-center">
+            <div class="flex justify-center mb-4">
+                <svg class="w-12 h-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <p id="customConfirmMessage" class="text-gray-200 text-lg mb-6"></p>
+            <div class="flex gap-3">
+                <button id="customCancelButton" class="flex-1 px-6 py-3 bg-dark-tertiary hover:bg-dark rounded-lg transition text-gray-200 font-medium">
+                    Cancel
+                </button>
+                <button id="customConfirmButton" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition text-white font-medium">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div th:replace="~{fragments :: modals}"></div>
 
 </body>
 </html>
