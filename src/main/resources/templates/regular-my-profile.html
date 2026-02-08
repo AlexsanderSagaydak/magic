@@ -233,7 +233,9 @@
                         <div class="space-y-3">
                             <div class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">First Name:</span>
-                                <span class="text-gray-100 view-field" th:text="${user.firstName}"></span>
+                                <div class="view-field flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100" th:text="${user.firstName}"></span>
+                                </div>
                                 <div class="edit-field flex-1">
                                     <input type="text" name="firstName" th:value="${user.firstName}"
                                            class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
@@ -242,7 +244,9 @@
 
                             <div class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">Last Name:</span>
-                                <span class="text-gray-100 view-field" th:text="${user.lastName}"></span>
+                                <div class="view-field flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100" th:text="${user.lastName}"></span>
+                                </div>
                                 <div class="edit-field flex-1">
                                     <input type="text" name="lastName" th:value="${user.lastName}"
                                            class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
@@ -251,18 +255,24 @@
 
                             <div class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">Email:</span>
-                                <span class="text-gray-100 break-all" th:text="${user.email}"></span>
+                                <div class="flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100 break-all" th:text="${user.email}"></span>
+                                </div>
                             </div>
 
                             <div class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">Username:</span>
-                                <span class="text-gray-100" th:text="${user.username}"></span>
+                                <div class="flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100" th:text="${user.username}"></span>
+                                </div>
                             </div>
 
                             <div th:if="${user.regularProfile != null}" class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">Birth Date:</span>
-                                <span class="text-gray-100 view-field"
-                                      th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></span>
+                                <div class="view-field flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100"
+                                          th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></span>
+                                </div>
                                 <div class="edit-field flex-1">
                                     <input type="date" name="birthDate" th:value="${user.regularProfile.birthDate}"
                                            class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
@@ -271,8 +281,10 @@
 
                             <div th:if="${user.regularProfile != null}" class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">Birth Place:</span>
-                                <span class="text-gray-100 view-field"
-                                      th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></span>
+                                <div class="view-field flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100"
+                                          th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></span>
+                                </div>
                                 <div class="edit-field flex-1">
                                     <input type="text" name="birthPlace" th:value="${user.regularProfile.birthPlace}"
                                            class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none"
@@ -282,8 +294,10 @@
 
                             <div th:if="${user.regularProfile != null}" class="flex items-center gap-4">
                                 <span class="text-gray-400 text-sm w-28 flex-shrink-0">Birth Time:</span>
-                                <span class="text-gray-100 view-field"
-                                      th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></span>
+                                <div class="view-field flex-1 max-w-md px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                    <span class="text-gray-100"
+                                          th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></span>
+                                </div>
                                 <div class="edit-field flex-1">
                                     <input type="time" name="birthTime" th:value="${user.regularProfile.birthTime}"
                                            class="w-full max-w-md px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">

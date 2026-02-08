@@ -524,16 +524,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- First Name -->
                         <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">First Name</p>
-                            <p class="text-gray-100 font-medium view-field" th:text="${user.firstName}"></p>
+                            <p class="text-gray-400 text-sm mb-2">First Name</p>
+                            <div class="view-field px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                <p class="text-gray-100" th:text="${user.firstName}"></p>
+                            </div>
                             <input type="text" name="firstName" th:value="${user.firstName}"
                                    class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
                         </div>
 
                         <!-- Last Name -->
                         <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Last Name</p>
-                            <p class="text-gray-100 font-medium view-field" th:text="${user.lastName}"></p>
+                            <p class="text-gray-400 text-sm mb-2">Last Name</p>
+                            <div class="view-field px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                <p class="text-gray-100" th:text="${user.lastName}"></p>
+                            </div>
                             <input type="text" name="lastName" th:value="${user.lastName}"
                                    class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
                         </div>
@@ -541,38 +545,48 @@
                         <!-- Email (read-only) -->
                         <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
                             <p class="text-gray-400 text-sm mb-2">Email</p>
-                            <p class="text-gray-100 font-medium break-all" th:text="${user.email}"></p>
+                            <div class="px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                <p class="text-gray-100 break-all" th:text="${user.email}"></p>
+                            </div>
                         </div>
 
                         <!-- Username (read-only) -->
                         <div class="bg-dark p-4 rounded-lg border border-dark-tertiary">
                             <p class="text-gray-400 text-sm mb-2">Username</p>
-                            <p class="text-gray-100 font-medium" th:text="${user.username}"></p>
+                            <div class="px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                <p class="text-gray-100" th:text="${user.username}"></p>
+                            </div>
                         </div>
 
                         <!-- Birth Date -->
                         <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Date</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></p>
+                            <p class="text-gray-400 text-sm mb-2">Birth Date</p>
+                            <div class="view-field px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                <p class="text-gray-100"
+                                   th:text="${user.regularProfile.birthDate != null ? #temporals.format(user.regularProfile.birthDate, 'dd MMM yyyy') : 'Not set'}"></p>
+                            </div>
                             <input type="date" name="birthDate" th:value="${user.regularProfile.birthDate}"
                                    class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
                         </div>
 
                         <!-- Birth Place -->
                         <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Place</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></p>
+                            <p class="text-gray-400 text-sm mb-2">Birth Place</p>
+                            <div class="view-field px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50">
+                                <p class="text-gray-100"
+                                   th:text="${user.regularProfile.birthPlace != null ? user.regularProfile.birthPlace : 'Not set'}"></p>
+                            </div>
                             <input type="text" name="birthPlace" th:value="${user.regularProfile.birthPlace}"
                                    class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none" placeholder="Enter birth place">
                         </div>
 
                         <!-- Birth Time -->
                         <div th:if="${user.regularProfile != null}" class="bg-dark p-4 rounded-lg border border-dark-tertiary md:col-span-2">
-                            <p class="text-gray-400 text-sm mb-2 view-field">Birth Time</p>
-                            <p class="text-gray-100 font-medium view-field"
-                               th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></p>
+                            <p class="text-gray-400 text-sm mb-2">Birth Time</p>
+                            <div class="view-field px-3 py-2 bg-dark-tertiary/30 rounded border border-dark-tertiary/50 max-w-xs">
+                                <p class="text-gray-100"
+                                   th:text="${user.regularProfile.birthTime != null ? #temporals.format(user.regularProfile.birthTime, 'HH:mm') : 'Not set'}"></p>
+                            </div>
                             <input type="time" name="birthTime" th:value="${user.regularProfile.birthTime}"
                                    class="edit-field w-full px-3 py-2 bg-dark-tertiary rounded border border-dark-tertiary text-gray-100 focus:border-accent focus:outline-none">
                         </div>
